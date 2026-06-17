@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "sonner";
 import ClientLayout from "./client-layout";
 
-const inter = Inter({ subsets: ["latin", "thai"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "BogiePOS — ระบบขายหน้าร้าน",

@@ -49,8 +49,8 @@ export function SalesCharts({ dailySales, monthlySales }: SalesChartsProps) {
               <AreaChart data={formattedDaily} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#7c3aed" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#09090b" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#09090b" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" className="dark:stroke-neutral-800" />
@@ -69,14 +69,14 @@ export function SalesCharts({ dailySales, monthlySales }: SalesChartsProps) {
                   width={60}
                 />
                 <Tooltip 
-                  formatter={(value: number) => [formatCurrency(value), "ยอดขาย"]}
+                  formatter={(value: any) => [formatCurrency(Number(value) || 0), "ยอดขาย"]}
                   labelStyle={{ color: "#111827", fontWeight: "bold" }}
                   contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="revenue" 
-                  stroke="#7c3aed" 
+                  stroke="#09090b" 
                   strokeWidth={2}
                   fillOpacity={1} 
                   fill="url(#colorRevenue)" 
@@ -113,14 +113,14 @@ export function SalesCharts({ dailySales, monthlySales }: SalesChartsProps) {
                   width={60}
                 />
                 <Tooltip 
-                  formatter={(value: number) => [formatCurrency(value), "ยอดขาย"]}
+                  formatter={(value: any) => [formatCurrency(Number(value) || 0), "ยอดขาย"]}
                   labelStyle={{ color: "#111827", fontWeight: "bold" }}
                   cursor={{ fill: "#f3f4f6", className: "dark:fill-neutral-800" }}
                   contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
                 />
                 <Bar 
                   dataKey="revenue" 
-                  fill="#8b5cf6" 
+                  fill="#09090b" 
                   radius={[4, 4, 0, 0]} 
                   barSize={40}
                 />

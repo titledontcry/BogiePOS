@@ -36,7 +36,7 @@ export function ProductForm({ initialData, onSuccess }: ProductFormProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       name: initialData?.name || "",
       category: initialData?.category || "เสื้อผ้า",
