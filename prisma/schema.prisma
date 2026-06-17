@@ -1,0 +1,81 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Product {
+  id        Int       @id @default(autoincrement())
+  name      String
+  category  String    @default("อื่นๆ")
+  price     Float
+  costPrice Float     @default(0)
+  stock     Int       @default(0)
+  barcode   String?   @unique
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  saleItems SaleItem[]
+
+  @@map("products")
+}
+
+model Promotion {
+  id               Int           @id @default(autoincrement())
+  name             String
+  type             PromotionType
+  value            Float         @default(0)   // สำหรับ FIXED และ PERCENT
+  quantityRequired Int           @default(0)   // สำหรับ BUNDLE
+  specialPrice     Float         @default(0)   // สำหรับ BUNDLE
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  sales Sale[]
+
+  @@map("promotions")
+}
+
+enum PromotionType {
+  FIXED_DISCOUNT    // ลด X บาท
+  PERCENT_DISCOUNT  // ลด X%
+  BUNDLE            // ซื้อ N ตัว ราคา X บาท
+}
+
+model Sale {
+  id              Int      @id @default(autoincrement())
+  subtotal        Float
+  promotionDiscount Float  @default(0)
+  manualDiscount  Float    @default(0)
+  total           Float
+  note            String?
+  createdAt       DateTime @default(now())
+
+  promotionId     Int?
+  promotion       Promotion? @relation(fields: [promotionId], references: [id])
+  items           SaleItem[]
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id        Int     @id @default(autoincrement())
+  quantity  Int
+  unitPrice Float
+  subtotal  Float
+
+  saleId    Int
+  sale      Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("sale_items")
+}
