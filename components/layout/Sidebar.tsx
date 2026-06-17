@@ -17,7 +17,7 @@ const navItems = [
   { href: "/products", label: "สินค้า", icon: Package },
   { href: "/promotions", label: "โปรโมชั่น", icon: Tag },
   { href: "/history", label: "ประวัติ", icon: History },
-  { href: "/dashboard", label: "แดชบอร์ด", icon: LayoutDashboard },
+  { href: "/", label: "แดชบอร์ด", icon: LayoutDashboard },
 ]
 
 export default function Sidebar() {

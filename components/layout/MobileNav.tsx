@@ -16,7 +16,7 @@ const navItems = [
   { href: "/products", label: "สินค้า", icon: Package },
   { href: "/promotions", label: "โปรฯ", icon: Tag },
   { href: "/history", label: "ประวัติ", icon: History },
-  { href: "/dashboard", label: "สรุป", icon: LayoutDashboard },
+  { href: "/", label: "สรุป", icon: LayoutDashboard },
 ]
 
 export default function MobileNav() {
