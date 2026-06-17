@@ -25,6 +25,7 @@ model Product {
   saleItems SaleItem[]
 
   @@map("products")
+  @@index([isActive, createdAt])
 }
 
 model Promotion {
@@ -63,6 +64,7 @@ model Sale {
   items           SaleItem[]
 
   @@map("sales")
+  @@index([createdAt])
 }
 
 model SaleItem {
@@ -78,4 +80,6 @@ model SaleItem {
   product   Product @relation(fields: [productId], references: [id])
 
   @@map("sale_items")
+  @@index([saleId])
+  @@index([productId])
 }
