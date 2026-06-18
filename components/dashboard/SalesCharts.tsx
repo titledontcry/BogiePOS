@@ -49,34 +49,34 @@ export function SalesCharts({ dailySales, monthlySales }: SalesChartsProps) {
               <AreaChart data={formattedDaily} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#09090b" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="#09090b" stopOpacity={0} />
+                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" className="dark:stroke-neutral-800" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                 <XAxis 
                   dataKey="displayDate" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
                   dy={10}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
                   tickFormatter={(value) => `฿${value}`}
                   width={60}
                 />
                 <Tooltip 
                   formatter={(value: any) => [formatCurrency(Number(value) || 0), "ยอดขาย"]}
-                  labelStyle={{ color: "#111827", fontWeight: "bold" }}
-                  contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
+                  labelStyle={{ color: "var(--foreground)", fontWeight: "bold" }}
+                  contentStyle={{ borderRadius: "14px", border: "1px solid var(--border)", boxShadow: "var(--shadow-soft)" }}
                 />
                 <Area 
                   type="monotone" 
                   dataKey="revenue" 
-                  stroke="#09090b" 
+                  stroke="var(--primary)" 
                   strokeWidth={2}
                   fillOpacity={1} 
                   fill="url(#colorRevenue)" 
@@ -97,31 +97,31 @@ export function SalesCharts({ dailySales, monthlySales }: SalesChartsProps) {
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={formattedMonthly} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" className="dark:stroke-neutral-800" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                 <XAxis 
                   dataKey="displayMonth" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
                   dy={10}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
                   tickFormatter={(value) => `฿${value}`}
                   width={60}
                 />
                 <Tooltip 
                   formatter={(value: any) => [formatCurrency(Number(value) || 0), "ยอดขาย"]}
-                  labelStyle={{ color: "#111827", fontWeight: "bold" }}
-                  cursor={{ fill: "#f3f4f6", className: "dark:fill-neutral-800" }}
-                  contentStyle={{ borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}
+                  labelStyle={{ color: "var(--foreground)", fontWeight: "bold" }}
+                  cursor={{ fill: "var(--accent)" }}
+                  contentStyle={{ borderRadius: "14px", border: "1px solid var(--border)", boxShadow: "var(--shadow-soft)" }}
                 />
                 <Bar 
                   dataKey="revenue" 
-                  fill="#09090b" 
-                  radius={[4, 4, 0, 0]} 
+                  fill="var(--primary)" 
+                  radius={[10, 10, 4, 4]} 
                   barSize={40}
                 />
               </BarChart>

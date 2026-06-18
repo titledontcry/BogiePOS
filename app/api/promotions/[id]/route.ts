@@ -9,7 +9,7 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
-    const { name, type, value, quantityRequired, specialPrice, isActive } = body
+    const { name, type, value, quantityRequired, specialPrice, applicableCategories, isActive } = body
 
     const promotion = await prisma.promotion.update({
       where: { id: parseInt(id) },
@@ -19,6 +19,7 @@ export async function PUT(
         ...(value !== undefined && { value: parseFloat(value) }),
         ...(quantityRequired !== undefined && { quantityRequired: parseInt(quantityRequired) }),
         ...(specialPrice !== undefined && { specialPrice: parseFloat(specialPrice) }),
+        ...(applicableCategories !== undefined && { applicableCategories }),
         ...(isActive !== undefined && { isActive }),
       },
     })

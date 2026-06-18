@@ -16,7 +16,7 @@ export function BestSellerList({ products }: BestSellerListProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-amber-500" /> สินค้าขายดี 5 อันดับแรก
+          <Trophy className="h-5 w-5 text-[oklch(0.62_0.12_78)]" /> สินค้าขายดี 5 อันดับแรก
         </CardTitle>
         <CardDescription>จัดอันดับจากจำนวนชิ้นที่ขายได้</CardDescription>
       </CardHeader>
@@ -33,8 +33,8 @@ export function BestSellerList({ products }: BestSellerListProps) {
                   <div className={`
                     flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold
                     ${index === 0 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-500' : 
-                      index === 1 ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400' : 
-                      index === 2 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-500' : 
+                      index === 1 ? 'bg-secondary text-secondary-foreground' : 
+                      index === 2 ? 'bg-[var(--coral-soft)] text-[var(--coral)]' : 
                       'bg-muted text-muted-foreground'}
                   `}>
                     {index + 1}

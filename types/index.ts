@@ -20,6 +20,7 @@ export interface Promotion {
   value: number
   quantityRequired: number
   specialPrice: number
+  applicableCategories: string[]
   isActive: boolean
   createdAt?: string
 }
@@ -63,6 +64,7 @@ export interface CartItem {
   price: number
   quantity: number
   stock: number
+  category: string
 }
 
 export interface CheckoutPayload {

@@ -21,17 +21,18 @@ export function CartItem({ productId }: CartItemProps) {
       <div className="flex-1 min-w-0 pr-2">
         <h4 className="text-sm font-medium leading-none mb-1 truncate">{item.name}</h4>
         <div className="text-[10px] text-muted-foreground mb-1">{formatCurrency(item.price)} / ชิ้น</div>
-        <div className="text-sm text-violet-600 dark:text-violet-400 font-semibold">
+        <div className="text-sm text-primary font-bold">
           {formatCurrency(item.price * item.quantity)}
         </div>
       </div>
       
-      <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1 border">
+      <div className="flex items-center gap-1 bg-muted/60 rounded-xl p-1 border">
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-7 w-7 rounded-md hover:bg-background shadow-sm" 
+          className="h-9 w-9 rounded-lg hover:bg-card" 
           onClick={() => updateQty(productId, item.quantity - 1)}
+          aria-label={`ลดจำนวน ${item.name}`}
         >
           <Minus className="h-3 w-3" />
         </Button>
@@ -39,9 +40,10 @@ export function CartItem({ productId }: CartItemProps) {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="h-7 w-7 rounded-md hover:bg-background shadow-sm" 
+          className="h-9 w-9 rounded-lg hover:bg-card" 
           onClick={() => updateQty(productId, item.quantity + 1)}
           disabled={item.quantity >= item.stock}
+          aria-label={`เพิ่มจำนวน ${item.name}`}
         >
           <Plus className="h-3 w-3" />
         </Button>
@@ -50,8 +52,9 @@ export function CartItem({ productId }: CartItemProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-8 w-8 ml-2 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+        className="h-9 w-9 ml-2 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
         onClick={() => removeItem(productId)}
+        aria-label={`ลบ ${item.name} ออกจากตะกร้า`}
       >
         <Trash2 className="h-4 w-4" />
       </Button>

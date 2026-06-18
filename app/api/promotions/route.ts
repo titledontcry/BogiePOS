@@ -19,7 +19,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, type, value, quantityRequired, specialPrice } = body
+    const { name, type, value, quantityRequired, specialPrice, applicableCategories } = body
 
     if (!name || !type) {
       return NextResponse.json({ error: "กรุณากรอกข้อมูลให้ครบ" }, { status: 400 })
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
         value: parseFloat(value || "0"),
         quantityRequired: parseInt(quantityRequired || "0"),
         specialPrice: parseFloat(specialPrice || "0"),
+        applicableCategories: Array.isArray(applicableCategories) ? applicableCategories : [],
       },
     })
 

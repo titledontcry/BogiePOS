@@ -19,7 +19,7 @@ interface CheckoutDialogProps {
   manualDiscount: number
   total: number
   promotionId: number | null
-  onSuccess: () => void
+  onSuccess: (soldItems: { productId: number; quantity: number }[]) => void
 }
 
 export function CheckoutDialog({ 
@@ -78,9 +78,9 @@ export function CheckoutDialog({
       toast.success("บันทึกการขายสำเร็จ")
       setCashReceived("")
       setNote("")
-      onSuccess()
-    } catch (error: any) {
-      toast.error(error.message)
+      onSuccess(items.map(i => ({ productId: i.productId, quantity: i.quantity })))
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "ชำระเงินไม่สำเร็จ")
     } finally {
       setIsLoading(false)
     }
@@ -91,7 +91,7 @@ export function CheckoutDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Receipt className="h-5 w-5 text-violet-600" /> ยืนยันการชำระเงิน
+            <Receipt className="h-5 w-5 text-primary" /> ยืนยันการชำระเงิน
           </DialogTitle>
           <DialogDescription>
             ตรวจสอบยอดเงินและรับชำระจากลูกค้า
@@ -105,14 +105,14 @@ export function CheckoutDialog({
               <span>{formatCurrency(subtotal)}</span>
             </div>
             {(promotionDiscount > 0 || manualDiscount > 0) && (
-              <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400">
+              <div className="flex justify-between text-sm text-[var(--success)]">
                 <span>ส่วนลดรวม</span>
                 <span>-{formatCurrency(promotionDiscount + manualDiscount)}</span>
               </div>
             )}
             <div className="flex justify-between items-end pt-2 border-t border-border/50">
               <span className="font-medium">ยอดสุทธิ</span>
-              <span className="text-3xl font-bold text-violet-600 dark:text-violet-400">
+              <span className="text-3xl font-extrabold text-primary">
                 {formatCurrency(total)}
               </span>
             </div>
@@ -135,7 +135,7 @@ export function CheckoutDialog({
             {cash > 0 && (
               <div className={`p-4 rounded-xl border flex justify-between items-center ${
                 isEnoughCash 
-                  ? 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400' 
+                  ? 'bg-[var(--success-soft)] border-transparent text-[var(--success)]' 
                   : 'bg-destructive/10 border-destructive/20 text-destructive'
               }`}>
                 <span className="font-medium">เงินทอน</span>

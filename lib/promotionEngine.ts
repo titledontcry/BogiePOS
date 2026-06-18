@@ -9,11 +9,13 @@ export interface Promotion {
   value?: number
   quantityRequired?: number
   specialPrice?: number
+  applicableCategories?: string[]
 }
 
 export interface CartItem {
   price: number
   quantity: number
+  category?: string
 }
 
 export interface PromotionResult {
@@ -26,31 +28,38 @@ export function calculateBestPromotion(
   items: CartItem[],
   promotions: Promotion[]
 ): PromotionResult {
-  const subtotal = items.reduce((s, i) => s + i.price * i.quantity, 0)
-  const totalQty = items.reduce((s, i) => s + i.quantity, 0)
-
   let bestDiscount = 0
   let bestLabel = ''
   let bestPromotion: Promotion | null = null
 
   for (const promo of promotions) {
+    // Filter items belonging to applicable categories
+    const eligibleItems = promo.applicableCategories && promo.applicableCategories.length > 0
+      ? items.filter(item => promo.applicableCategories?.includes(item.category || ""))
+      : items
+
+    const eligibleSubtotal = eligibleItems.reduce((s, i) => s + i.price * i.quantity, 0)
+    const eligibleTotalQty = eligibleItems.reduce((s, i) => s + i.quantity, 0)
+
     let discount = 0
 
     if (promo.type === 'FIXED_DISCOUNT') {
-      discount = promo.value ?? 0
+      if (eligibleSubtotal > 0) {
+        discount = Math.min(promo.value ?? 0, eligibleSubtotal)
+      }
 
     } else if (promo.type === 'PERCENT_DISCOUNT') {
-      discount = Math.round(subtotal * ((promo.value ?? 0) / 100))
+      discount = Math.round(eligibleSubtotal * ((promo.value ?? 0) / 100))
 
     } else if (promo.type === 'BUNDLE') {
       const qty = promo.quantityRequired ?? 0
       const specialPrice = promo.specialPrice ?? 0
-      if (qty > 0 && totalQty >= qty) {
-        const sets = Math.floor(totalQty / qty)
-        const remainQty = totalQty - sets * qty
-        const avgPrice = subtotal / totalQty
+      if (qty > 0 && eligibleTotalQty >= qty) {
+        const sets = Math.floor(eligibleTotalQty / qty)
+        const remainQty = eligibleTotalQty - sets * qty
+        const avgPrice = eligibleSubtotal / eligibleTotalQty
         const priceWithBundle = sets * specialPrice + remainQty * avgPrice
-        discount = Math.max(0, Math.round(subtotal - priceWithBundle))
+        discount = Math.max(0, Math.round(eligibleSubtotal - priceWithBundle))
       }
     }
 

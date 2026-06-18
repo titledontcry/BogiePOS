@@ -53,12 +53,12 @@ export default function DashboardPage() {
   }, [fetchDashboard])
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border bg-card px-5 py-5 shadow-[var(--shadow-soft)]">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">ภาพรวมระบบ (Dashboard)</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-balance">ภาพรวมร้านวันนี้</h1>
+          <p className="text-muted-foreground mt-1 text-pretty">
             สรุปยอดขาย กำไร และสถิติที่สำคัญของร้าน
           </p>
         </div>
@@ -78,7 +78,8 @@ export default function DashboardPage() {
           <button 
             onClick={fetchDashboard} 
             disabled={isLoading}
-            className="p-2 border rounded-md hover:bg-muted transition-colors disabled:opacity-50"
+            className="grid h-11 w-11 place-items-center rounded-xl border bg-card hover:bg-accent transition-colors disabled:opacity-50"
+            aria-label="รีเฟรชข้อมูลภาพรวม"
           >
             <RefreshCw className={`h-4 w-4 text-muted-foreground ${isLoading ? 'animate-spin' : ''}`} />
           </button>
@@ -87,7 +88,7 @@ export default function DashboardPage() {
 
       {isLoading && !data ? (
         <div className="flex flex-col items-center justify-center py-32 text-muted-foreground">
-          <RefreshCw className="h-10 w-10 animate-spin mb-4 text-violet-600" />
+          <RefreshCw className="h-10 w-10 animate-spin mb-4 text-primary" />
           <p>กำลังรวบรวมข้อมูล...</p>
         </div>
       ) : data ? (

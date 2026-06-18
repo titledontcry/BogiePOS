@@ -27,16 +27,20 @@ export function ProductCard({ product }: ProductCardProps) {
       price: product.price,
       quantity: 1,
       stock: product.stock,
+      category: product.category,
     })
   }
 
   return (
-    <div 
+    <button 
+      type="button"
       onClick={handleAdd}
-      className={`group relative flex flex-col justify-between p-4 rounded-2xl border bg-card text-card-foreground shadow-sm transition-all duration-200 cursor-pointer overflow-hidden ${
+      disabled={isOutOfStock}
+      aria-label={`${isOutOfStock ? "สินค้าหมด" : "เพิ่มสินค้า"} ${product.name} ราคา ${formatCurrency(product.price)} เหลือ ${remainingStock} ชิ้น`}
+      className={`group relative flex min-h-[128px] flex-col justify-between overflow-hidden rounded-2xl border bg-card p-4 text-left text-card-foreground shadow-[var(--shadow-soft)] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
         isOutOfStock 
-          ? "opacity-60 cursor-not-allowed grayscale" 
-          : "hover:shadow-md hover:border-violet-300 dark:hover:border-violet-700 active:scale-[0.98]"
+          ? "cursor-not-allowed opacity-65 grayscale" 
+          : "cursor-pointer hover:-translate-y-0.5 hover:border-primary hover:shadow-[var(--shadow-lift)] active:scale-[0.98]"
       }`}
     >
       <div className="space-y-1 z-10">
@@ -47,7 +51,7 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <div className="mt-4 flex items-end justify-between z-10">
-        <div className="font-bold text-violet-600 dark:text-violet-400">
+        <div className="font-extrabold text-primary">
           {formatCurrency(product.price)}
         </div>
         <Badge variant={remainingStock > 5 ? "secondary" : "destructive"} className="text-[10px] px-1.5 py-0">
@@ -57,9 +61,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
       {/* Hover overlay add button effect */}
       {!isOutOfStock && (
-        <div className="absolute inset-0 bg-violet-600/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="bg-background/90 backdrop-blur-sm rounded-full p-2 shadow-sm transform translate-y-4 group-hover:translate-y-0 transition-transform duration-200">
-            <Plus className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+        <div className="absolute inset-0 flex items-center justify-center bg-primary/6 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          <div className="rounded-full bg-card/95 p-2 shadow-[var(--shadow-soft)] transition-transform duration-200 group-hover:translate-y-0">
+            <Plus className="h-6 w-6 text-primary" />
           </div>
         </div>
       )}
@@ -75,10 +79,10 @@ export function ProductCard({ product }: ProductCardProps) {
       
       {/* In cart badge indicator */}
       {inCart > 0 && (
-        <div className="absolute top-2 right-2 z-20 flex h-6 w-6 items-center justify-center rounded-full bg-violet-600 text-[10px] font-bold text-white shadow-sm">
+        <div className="absolute top-2 right-2 z-20 flex h-7 min-w-7 items-center justify-center rounded-full bg-primary px-2 text-[11px] font-bold text-primary-foreground shadow-[var(--shadow-soft)]">
           {inCart}
         </div>
       )}
-    </div>
+    </button>
   )
 }

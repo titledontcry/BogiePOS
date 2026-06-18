@@ -8,6 +8,7 @@ export interface CartItem {
   price: number
   quantity: number
   stock: number
+  category: string
 }
 
 interface CartStore {
@@ -41,12 +42,12 @@ export const useCartStore = create<CartStore>()(
           return {
             items: state.items.map(i =>
               i.productId === product.productId
-                ? { ...i, quantity: Math.min(i.quantity + 1, i.stock) }
-                : i
+                ? { ...i, quantity: Math.min(i.quantity + 1, i.stock), category: i.category || "อื่นๆ" }
+                : { ...i, category: i.category || "อื่นๆ" }
             )
           }
         }
-        return { items: [...state.items, { ...product, quantity: 1 }] }
+        return { items: [...state.items, { ...product, category: product.category || "อื่นๆ", quantity: 1 }] }
       }),
 
       removeItem: (productId) => set((state) => ({

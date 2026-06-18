@@ -62,10 +62,30 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
       header: "รายละเอียด",
       cell: ({ row }) => {
         const p = row.original
-        if (p.type === "FIXED_DISCOUNT") return <div>ลด {formatCurrency(p.value)}</div>
-        if (p.type === "PERCENT_DISCOUNT") return <div>ลด {p.value}%</div>
-        if (p.type === "BUNDLE") return <div>ซื้อ {p.quantityRequired} ชิ้น ราคา {formatCurrency(p.specialPrice)}</div>
-        return <div>-</div>
+        const hasCategories = p.applicableCategories && p.applicableCategories.length > 0
+        return (
+          <div className="space-y-1">
+            <div className="font-medium">
+              {p.type === "FIXED_DISCOUNT" && `ลด ${formatCurrency(p.value)}`}
+              {p.type === "PERCENT_DISCOUNT" && `ลด ${p.value}%`}
+              {p.type === "BUNDLE" && `ซื้อ ${p.quantityRequired} ชิ้น ราคา ${formatCurrency(p.specialPrice)}`}
+            </div>
+            <div className="flex flex-wrap gap-1 items-center">
+              <span className="text-[10px] text-muted-foreground mr-1">ใช้กับ:</span>
+              {hasCategories ? (
+                p.applicableCategories.map((cat) => (
+                  <Badge key={cat} variant="outline" className="text-[9px] px-1 py-0 bg-violet-50/50 text-violet-600 dark:bg-violet-950/20 dark:text-violet-400 border-violet-200 dark:border-violet-800">
+                    {cat}
+                  </Badge>
+                ))
+              ) : (
+                <Badge variant="outline" className="text-[9px] px-1 py-0 text-muted-foreground bg-muted/30">
+                  ทุกสินค้า (ทั้งร้าน)
+                </Badge>
+              )}
+            </div>
+          </div>
+        )
       }
     },
     {

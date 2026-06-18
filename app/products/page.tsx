@@ -79,30 +79,30 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border bg-card px-5 py-5 shadow-[var(--shadow-soft)]">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">จัดการสินค้า</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-balance">จัดการสินค้า</h1>
+          <p className="text-muted-foreground mt-1 text-pretty">
             เพิ่ม แก้ไข ลบ และจัดการสต๊อกสินค้าทั้งหมดในร้าน
           </p>
         </div>
-        <Button onClick={handleAdd} className="gap-2 shadow-md hover:shadow-lg transition-all">
+        <Button onClick={handleAdd} className="gap-2">
           <Plus className="h-4 w-4" />
           เพิ่มสินค้าใหม่
         </Button>
       </div>
 
       {/* Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-card p-4 rounded-xl border shadow-sm">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-card p-4 rounded-2xl border shadow-[var(--shadow-soft)]">
         <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="ค้นหาชื่อสินค้า หรือ บาร์โค้ด..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 bg-background"
+            className="pl-9"
           />
         </div>
         <Button 
@@ -111,6 +111,7 @@ export default function ProductsPage() {
           onClick={fetchProducts} 
           disabled={isLoading}
           className="shrink-0"
+          aria-label="รีเฟรชรายการสินค้า"
         >
           <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin text-primary' : ''}`} />
         </Button>

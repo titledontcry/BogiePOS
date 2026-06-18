@@ -24,40 +24,58 @@ export default function POSPage() {
   const subtotal = useCartStore((state) => state.subtotal())
   const clearCart = useCartStore((state) => state.clearCart)
 
-  const fetchData = useCallback(async () => {
-    setIsLoading(true)
-    try {
-      // Fetch only active products and promotions
-      const [productsRes, promosRes] = await Promise.all([
-        fetch("/api/products?active=true&limit=1000"), // Get a large number for POS
-        fetch("/api/promotions")
-      ])
+  const loadData = useCallback(async () => {
+    const [productsRes, promosRes] = await Promise.all([
+      fetch("/api/products?active=true&limit=1000&minimal=true"),
+      fetch("/api/promotions")
+    ])
 
-      if (!productsRes.ok || !promosRes.ok) {
-        throw new Error("Failed to fetch data")
-      }
-
-      const productsData = await productsRes.json()
-      const promosData = await promosRes.json()
-
-      setProducts(productsData.products)
-      setPromotions(promosData)
-    } catch (error) {
-      toast.error("ไม่สามารถโหลดข้อมูลสินค้าและโปรโมชั่นได้")
-      console.error(error)
-    } finally {
-      setIsLoading(false)
+    if (!productsRes.ok || !promosRes.ok) {
+      throw new Error("Failed to fetch data")
     }
+
+    const productsData = await productsRes.json()
+    const promosData = await promosRes.json()
+
+    setProducts(productsData.products)
+    setPromotions(promosData)
   }, [])
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    let isMounted = true
 
-  const handleCheckoutSuccess = () => {
+    const loadInitialData = async () => {
+      try {
+        await loadData()
+      } catch (error) {
+        toast.error("ไม่สามารถโหลดข้อมูลสินค้าและโปรโมชั่นได้")
+        console.error(error)
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    loadInitialData()
+
+    return () => {
+      isMounted = false
+    }
+  }, [loadData])
+
+  const handleCheckoutSuccess = (soldItems: { productId: number; quantity: number }[]) => {
     setIsCheckoutOpen(false)
     clearCart()
-    fetchData() // Refresh stock after sale
+    setProducts((prevProducts) =>
+      prevProducts.map((p) => {
+        const sold = soldItems.find((item) => item.productId === p.id)
+        if (sold) {
+          return { ...p, stock: Math.max(0, p.stock - sold.quantity) }
+        }
+        return p
+      })
+    )
   }
 
   // Calculate totals for checkout
@@ -67,12 +85,12 @@ export default function POSPage() {
   return (
     <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden">
       {/* Left Area: Product Grid */}
-      <div className="flex-1 p-4 lg:p-6 overflow-hidden h-[50vh] lg:h-full">
+      <div className="flex-1 p-4 lg:p-6 overflow-hidden h-[52vh] lg:h-full">
         <ProductGrid products={products} isLoading={isLoading} />
       </div>
 
       {/* Right Area: Cart Panel */}
-      <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 h-[50vh] lg:h-full pb-16 lg:pb-0 z-10 lg:z-auto">
+      <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 h-[48vh] lg:h-full pb-17 lg:pb-0 z-10 lg:z-auto">
         <CartPanel 
           promotions={promotions} 
           onCheckout={() => setIsCheckoutOpen(true)} 

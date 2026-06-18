@@ -70,28 +70,28 @@ export default function PromotionsPage() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 space-y-6 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border bg-card px-5 py-5 shadow-[var(--shadow-soft)]">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <div className="p-2 bg-violet-100 dark:bg-violet-900/30 rounded-xl">
-              <Tag className="h-6 w-6 text-violet-600 dark:text-violet-400" />
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-3 text-balance">
+            <div className="p-2 bg-accent rounded-2xl">
+              <Tag className="h-6 w-6 text-accent-foreground" />
             </div>
             จัดการโปรโมชั่น
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-1 text-pretty">
             ตั้งค่าส่วนลดสำหรับสินค้าในร้าน ทั้งแบบลดราคาคงที่ ลดเปอร์เซ็นต์ หรือจัดชุดราคาพิเศษ
           </p>
         </div>
-        <Button onClick={handleAdd} className="gap-2 shadow-md hover:shadow-lg transition-all">
+        <Button onClick={handleAdd} className="gap-2">
           <Plus className="h-4 w-4" />
           สร้างโปรโมชั่น
         </Button>
       </div>
 
       {/* Toolbar */}
-      <div className="flex justify-end bg-card p-2 rounded-xl border shadow-sm">
+      <div className="flex justify-end bg-card p-2 rounded-2xl border shadow-[var(--shadow-soft)]">
         <Button 
           variant="ghost" 
           size="sm" 

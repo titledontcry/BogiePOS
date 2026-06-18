@@ -10,21 +10,32 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1")
     const limit = parseInt(searchParams.get("limit") || "50")
     const activeOnly = searchParams.get("active") !== "false"
+    const isMinimal = searchParams.get("minimal") === "true"
 
     const where = {
       ...(activeOnly && { isActive: true }),
       ...(search && {
         OR: [
           { name: { contains: search, mode: "insensitive" as const } },
-          { barcode: { contains: search, mode: "insensitive" as const } },
+          { barcode: { equals: search } }, // ปรับเป็น equals เพื่อให้ชน index ของบาร์โค้ดโดยตรง (เร็วขึ้นมาก)
         ],
       }),
       ...(category && category !== "all" && { category }),
     }
 
+    const select = isMinimal ? {
+      id: true,
+      name: true,
+      category: true,
+      price: true,
+      stock: true,
+      barcode: true,
+    } : undefined
+
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
+        select, // ส่ง select ไปยัง Prisma เพื่อดึงเฉพาะฟิลด์ที่ต้องการ
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * limit,
         take: limit,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useEffect } from "react"
 import { ShoppingBag, Tag, Trash2 } from "lucide-react"
 
 import { useCartStore } from "@/store/cartStore"
@@ -12,7 +12,6 @@ import { CartItem } from "./CartItem"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
 
 interface CartPanelProps {
   promotions: Promotion[]
@@ -31,21 +30,26 @@ export function CartPanel({ promotions, onCheckout }: CartPanelProps) {
 
   // Calculate promotion
   const promotionResult = useMemo(() => {
-    const result = calculateBestPromotion(items, promotions)
-    setPromotionId(result.appliedPromotion?.id || null)
-    return result
-  }, [items, promotions, setPromotionId])
+    return calculateBestPromotion(items, promotions)
+  }, [items, promotions])
+
+  const appliedPromoId = promotionResult.appliedPromotion?.id || null
+
+  // Sync with store in useEffect to avoid render-phase state updates
+  useEffect(() => {
+    setPromotionId(appliedPromoId)
+  }, [appliedPromoId, setPromotionId])
 
   const totalDiscount = promotionResult.discount + manualDiscount
   const finalTotal = Math.max(0, subtotal - totalDiscount)
 
   return (
-    <div className="flex flex-col h-full bg-card border-l border-border shadow-2xl lg:shadow-none">
+    <div className="flex flex-col h-full bg-card border-l border-border shadow-[var(--shadow-lift)] lg:shadow-none">
       {/* Header */}
-      <div className="p-4 border-b border-border flex items-center justify-between shrink-0 bg-background/50 backdrop-blur-sm">
+      <div className="p-4 border-b border-border flex items-center justify-between shrink-0 bg-background/60 backdrop-blur-sm">
         <div className="flex items-center gap-2">
-          <div className="bg-violet-100 dark:bg-violet-900/50 p-2 rounded-lg">
-            <ShoppingBag className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+          <div className="bg-accent p-2 rounded-xl">
+            <ShoppingBag className="h-5 w-5 text-accent-foreground" />
           </div>
           <h2 className="font-bold text-lg">ตะกร้าสินค้า</h2>
         </div>
@@ -53,7 +57,7 @@ export function CartPanel({ promotions, onCheckout }: CartPanelProps) {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="text-muted-foreground hover:text-destructive text-xs h-8"
+            className="text-muted-foreground hover:text-destructive text-xs h-9"
             onClick={clearCart}
           >
             <Trash2 className="h-3.5 w-3.5 mr-1.5" />
@@ -91,7 +95,7 @@ export function CartPanel({ promotions, onCheckout }: CartPanelProps) {
 
             {/* Promotion Area */}
             {promotionResult.discount > 0 && (
-              <div className="flex justify-between items-start text-emerald-600 dark:text-emerald-400">
+              <div className="flex justify-between items-start text-[var(--success)]">
                 <div className="flex flex-col">
                   <span className="flex items-center gap-1">
                     <Tag className="h-3.5 w-3.5" /> โปรโมชั่น
@@ -125,11 +129,11 @@ export function CartPanel({ promotions, onCheckout }: CartPanelProps) {
           <div className="flex justify-between items-end">
             <span className="font-medium text-muted-foreground">ยอดสุทธิ</span>
             <div className="flex flex-col items-end">
-              <span className="text-2xl font-bold text-violet-600 dark:text-violet-400 leading-none">
+              <span className="text-2xl font-extrabold text-primary leading-none">
                 {formatCurrency(finalTotal)}
               </span>
               {totalDiscount > 0 && (
-                <span className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">
+                <span className="text-xs text-[var(--success)] mt-1">
                   ประหยัดไป {formatCurrency(totalDiscount)}
                 </span>
               )}
@@ -137,7 +141,7 @@ export function CartPanel({ promotions, onCheckout }: CartPanelProps) {
           </div>
 
           <Button 
-            className="w-full h-12 text-lg shadow-md shadow-violet-500/20" 
+            className="w-full h-13 text-lg" 
             onClick={onCheckout}
           >
             ชำระเงิน
