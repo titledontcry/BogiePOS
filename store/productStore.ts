@@ -49,7 +49,7 @@ export const useProductStore = create<ProductStore>((set, get) => ({
 
   fetchProducts: async (force = false) => {
     // If already loaded and not forced to refresh, skip fetching
-    if (get().isLoaded && !force && get().products.length > 0) {
+    if (get().isLoaded && !force) {
       return
     }
 

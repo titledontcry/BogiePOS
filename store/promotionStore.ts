@@ -23,7 +23,7 @@ export const usePromotionStore = create<PromotionStore>((set, get) => ({
 
   fetchPromotions: async (force = false) => {
     // Skip if already loaded and not forced
-    if (get().isLoaded && !force && get().promotions.length > 0) {
+    if (get().isLoaded && !force) {
       return
     }
 
