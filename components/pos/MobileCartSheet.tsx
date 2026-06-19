@@ -59,8 +59,8 @@ export function MobileCartSheet({ promotions, onCheckout }: MobileCartSheetProps
 
   const handleCheckout = () => {
     setOpen(false)
-    // Small delay so sheet closes smoothly before dialog opens
-    setTimeout(() => onCheckout(), 200)
+    // Small delay (longer than the 250ms sheet exit animation) so sheet closes completely before dialog opens
+    setTimeout(() => onCheckout(), 350)
   }
 
   return (
