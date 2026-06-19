@@ -1,5 +1,4 @@
 import { ReactNode } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 interface StatCardProps {
@@ -16,16 +15,19 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon, description, trend, className }: StatCardProps) {
   return (
-    <Card className={cn("overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]", className)}>
-      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+    <div className={cn(
+      "overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-[var(--shadow-soft)] card-hover-transition hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[var(--shadow-lift)] select-none",
+      className
+    )}>
+      <div className="flex flex-row items-center justify-between p-6 pb-2 space-y-0">
+        <h3 className="text-sm font-medium text-muted-foreground leading-none tracking-tight">
           {title}
-        </CardTitle>
+        </h3>
         <div className="p-2 bg-accent text-accent-foreground rounded-xl">
           {icon}
         </div>
-      </CardHeader>
-      <CardContent>
+      </div>
+      <div className="p-6 pt-0">
         <div className="text-2xl font-extrabold tracking-tight">{value}</div>
         
         {(description || trend) && (
@@ -41,7 +43,7 @@ export function StatCard({ title, value, icon, description, trend, className }: 
             {description && <span>{description}</span>}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

@@ -85,3 +85,15 @@ model SaleItem {
   @@index([saleId])
   @@index([productId])
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String   // Hashed password
+  name      String
+  role      String   @default("cashier") // admin, cashier
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}

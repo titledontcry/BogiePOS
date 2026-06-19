@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { IconPlus, IconRefresh, IconTag, IconTagOff } from "@tabler/icons-react"
+import { usePromotionStore } from "@/store/promotionStore"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -11,28 +12,26 @@ import { PromotionForm } from "@/components/promotions/PromotionForm"
 import { Promotion } from "@/types"
 
 export default function PromotionsPage() {
-  const [promotions, setPromotions] = useState<Promotion[]>([])
+  const promotions = usePromotionStore((state) => state.promotions)
+  const storeFetchPromotions = usePromotionStore((state) => state.fetchPromotions)
+  const storeIsLoading = usePromotionStore((state) => state.isLoading)
   const [isLoading, setIsLoading] = useState(true)
   
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingPromo, setEditingPromo] = useState<Promotion | undefined>(undefined)
 
-  const fetchPromotions = useCallback(async () => {
+  const fetchPromotions = useCallback(async (force = false) => {
     setIsLoading(true)
     try {
-      const res = await fetch("/api/promotions")
-      if (!res.ok) throw new Error("Failed to fetch promotions")
-      
-      const data = await res.json()
-      setPromotions(data)
+      await storeFetchPromotions(force)
     } catch (error) {
       toast.error("ไม่สามารถดึงข้อมูลโปรโมชั่นได้")
       console.error(error)
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [storeFetchPromotions])
 
   useEffect(() => {
     fetchPromotions()
@@ -49,6 +48,7 @@ export default function PromotionsPage() {
   }
 
   const handleDelete = async (promotion: Promotion) => {
+    setIsLoading(true)
     try {
       const res = await fetch(`/api/promotions/${promotion.id}`, {
         method: "DELETE",
@@ -57,16 +57,18 @@ export default function PromotionsPage() {
       if (!res.ok) throw new Error("Failed to delete promotion")
       
       toast.success("ลบโปรโมชั่นสำเร็จ")
-      fetchPromotions()
+      await fetchPromotions(true) // Force refresh
     } catch (error) {
       toast.error("ไม่สามารถลบโปรโมชั่นได้")
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
     setIsDialogOpen(false)
-    fetchPromotions()
+    await fetchPromotions(true) // Force refresh
   }
 
   return (
@@ -84,7 +86,7 @@ export default function PromotionsPage() {
             </p>
           </div>
         </div>
-        <Button onClick={handleAdd} className="gap-2 shrink-0 rounded-xl">
+        <Button onClick={handleAdd} className="gap-2 shrink-0 rounded-2xl">
           <IconPlus className="h-4 w-4 stroke-[2.5]" />
           สร้างโปรโมชั่น
         </Button>
@@ -96,11 +98,11 @@ export default function PromotionsPage() {
           <Button 
             variant="ghost" 
             size="sm" 
-            onClick={fetchPromotions} 
-            disabled={isLoading}
-            className="text-muted-foreground rounded-xl"
+            onClick={() => fetchPromotions(true)} 
+            disabled={isLoading || storeIsLoading}
+            className="text-muted-foreground rounded-2xl"
           >
-            <IconRefresh className={`h-4 w-4 mr-2 stroke-[2] ${isLoading ? 'animate-spin text-primary' : ''}`} />
+            <IconRefresh className={`h-4 w-4 mr-2 stroke-[2] ${isLoading || storeIsLoading ? 'animate-spin text-primary' : ''}`} />
             รีเฟรชข้อมูล
           </Button>
         </div>
@@ -124,7 +126,7 @@ export default function PromotionsPage() {
               สร้างโปรโมชั่นแรกเพื่อกระตุ้นยอดขายของคุณ เช่น ลดราคาคงที่ ลดเป็นเปอร์เซ็นต์ หรือจัดเซ็ตราคาสุดพิเศษ
             </p>
           </div>
-          <Button onClick={handleAdd} className="gap-2 rounded-xl mt-2">
+          <Button onClick={handleAdd} className="gap-2 rounded-2xl mt-2">
             <IconPlus className="h-4 w-4 stroke-[2.5]" />
             สร้างโปรโมชั่นแรก
           </Button>

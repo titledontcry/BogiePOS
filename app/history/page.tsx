@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { IconHistory, IconRefresh, IconDownload, IconCalendar } from "@tabler/icons-react"
+import { useSaleHistoryStore } from "@/store/saleHistoryStore"
 import { toast } from "sonner"
 import * as XLSX from "xlsx"
 
@@ -38,7 +39,10 @@ export default function HistoryPage() {
 
   const initialDates = getDatesFromOption("7days")
 
-  const [sales, setSales] = useState<Sale[]>([])
+  const cache = useSaleHistoryStore((state) => state.cache)
+  const storeFetchSales = useSaleHistoryStore((state) => state.fetchSales)
+  const storeIsLoading = useSaleHistoryStore((state) => state.isLoading)
+
   const [isLoading, setIsLoading] = useState(true)
   
   // Date filter state
@@ -54,26 +58,20 @@ export default function HistoryPage() {
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null)
 
-  const fetchSales = useCallback(async () => {
+  const key = `${fromDate || 'all'}_${toDate || 'all'}`
+  const sales = cache[key] || []
+
+  const fetchSales = useCallback(async (force = false) => {
     setIsLoading(true)
     try {
-      const url = new URL("/api/sales", window.location.origin)
-      url.searchParams.append("limit", "100") // Get max 100 items for history page
-      if (fromDate) url.searchParams.append("from", fromDate)
-      if (toDate) url.searchParams.append("to", toDate)
-      
-      const res = await fetch(url.toString())
-      if (!res.ok) throw new Error("Failed to fetch sales")
-      
-      const data = await res.json()
-      setSales(data.sales)
+      await storeFetchSales(fromDate, toDate, force)
     } catch (error) {
       toast.error("ไม่สามารถดึงข้อมูลประวัติการขายได้")
       console.error(error)
     } finally {
       setIsLoading(false)
     }
-  }, [fromDate, toDate])
+  }, [fromDate, toDate, storeFetchSales])
 
   useEffect(() => {
     fetchSales()
@@ -154,18 +152,18 @@ export default function HistoryPage() {
         <div className="flex gap-3 shrink-0 w-full sm:w-auto">
           <Button 
             variant="outline" 
-            onClick={fetchSales} 
-            disabled={isLoading}
-            className="gap-2 rounded-xl h-10 w-10 p-0 sm:w-auto sm:px-4 shrink-0"
+            onClick={() => fetchSales(true)} 
+            disabled={isLoading || storeIsLoading}
+            className="gap-2 rounded-2xl h-10 w-10 p-0 sm:w-auto sm:px-4 shrink-0"
             title="รีเฟรช"
           >
-            <IconRefresh className={`h-4 w-4 stroke-[2] ${isLoading ? 'animate-spin text-primary' : 'text-muted-foreground'}`} />
+            <IconRefresh className={`h-4 w-4 stroke-[2] ${isLoading || storeIsLoading ? 'animate-spin text-primary' : 'text-muted-foreground'}`} />
             <span className="hidden sm:inline">รีเฟรช</span>
           </Button>
           <Button 
             onClick={exportToExcel} 
             disabled={sales.length === 0}
-            className="gap-2 rounded-xl h-10 flex-1 sm:flex-none shrink-0"
+            className="gap-2 rounded-2xl h-10 flex-1 sm:flex-none shrink-0"
           >
             <IconDownload className="h-4 w-4 stroke-[2.5]" />
             ส่งออก Excel
@@ -195,7 +193,7 @@ export default function HistoryPage() {
                   size="sm"
                   onClick={() => handleRangeOptionChange(opt as any)}
                   className={cn(
-                    "rounded-xl px-4.5 py-1.5 text-xs font-semibold h-9",
+                    "rounded-full px-4.5 py-1.5 text-xs font-semibold h-9",
                     isActive 
                       ? "bg-secondary text-foreground shadow-sm" 
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/40"
@@ -210,24 +208,24 @@ export default function HistoryPage() {
 
         {/* Custom date range inputs */}
         {rangeOption === "custom" && (
-          <div className="flex items-center gap-2 w-full md:w-auto animate-in fade-in slide-in-from-top-1 duration-200">
+          <div className="flex items-center gap-2 w-full md:w-auto animate-fade-in-scale">
             <input
               type="date"
               value={customFrom}
               onChange={(e) => setCustomFrom(e.target.value)}
-              className="px-3 py-1.5 h-9 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary w-full sm:w-auto"
+              className="px-3 py-1.5 h-9 rounded-xl border border-[#D2D2D7] bg-[#F5F5F7] text-sm focus:outline-none focus:ring-2 focus:ring-[#007AFF] transition-all w-full sm:w-auto"
             />
             <span className="text-muted-foreground text-xs shrink-0">ถึง</span>
             <input
               type="date"
               value={customTo}
               onChange={(e) => setCustomTo(e.target.value)}
-              className="px-3 py-1.5 h-9 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-1 focus:ring-primary w-full sm:w-auto"
+              className="px-3 py-1.5 h-9 rounded-xl border border-[#D2D2D7] bg-[#F5F5F7] text-sm focus:outline-none focus:ring-2 focus:ring-[#007AFF] transition-all w-full sm:w-auto"
             />
             <Button 
               size="sm" 
               onClick={handleApplyCustomDates}
-              className="h-9 px-4 rounded-xl shrink-0"
+              className="h-9 px-4 rounded-2xl shrink-0"
             >
               ตกลง
             </Button>
@@ -236,7 +234,7 @@ export default function HistoryPage() {
       </div>
 
       {/* Content */}
-      {isLoading && sales.length === 0 ? (
+      {(isLoading || storeIsLoading) && sales.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
           <IconRefresh className="h-8 w-8 animate-spin mb-4 text-primary/50 stroke-[2]" />
           <p>กำลังโหลดข้อมูลประวัติการขาย...</p>
@@ -257,7 +255,7 @@ export default function HistoryPage() {
           <Button 
             variant="outline"
             onClick={exportToExcel}
-            className="gap-2 rounded-xl border-border/60 hover:bg-muted/40 h-10 px-4 text-sm font-semibold"
+            className="gap-2 rounded-2xl border-border/60 hover:bg-muted/40 h-10 px-4 text-sm font-semibold"
           >
             <IconDownload className="h-4 w-4 stroke-[2]" />
             ส่งออก Excel

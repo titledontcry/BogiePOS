@@ -18,10 +18,12 @@ export function ProductCardAdmin({ product, onEdit, onDelete }: ProductCardAdmin
 
   return (
     <div 
+      role="button"
+      tabIndex={0}
       onClick={() => setShowActions(true)}
       onMouseLeave={() => setShowActions(false)}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-[var(--shadow-soft)] transition-all duration-[var(--duration-normal)] ease-[var(--ease-out-expo)] hover:shadow-[var(--shadow-lift)] cursor-pointer select-none",
+        "group relative flex flex-col overflow-hidden rounded-2xl border bg-card text-card-foreground shadow-[var(--shadow-soft)] card-hover-transition hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[var(--shadow-lift)] cursor-pointer select-none",
         isOutOfStock ? 'opacity-65 grayscale-[0.2]' : ''
       )}
     >
@@ -66,7 +68,7 @@ export function ProductCardAdmin({ product, onEdit, onDelete }: ProductCardAdmin
       {/* Overlay Actions */}
       {showActions && (
         <div 
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-background/75 backdrop-blur-[1px] p-4 animate-in fade-in zoom-in-95 duration-200"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-background/75 backdrop-blur-[2px] p-4 animate-fade-in-scale"
           onClick={(e) => {
             e.stopPropagation()
             setShowActions(false)
@@ -78,7 +80,7 @@ export function ProductCardAdmin({ product, onEdit, onDelete }: ProductCardAdmin
               onEdit(product)
               setShowActions(false)
             }}
-            className="flex items-center justify-center gap-2 w-full max-w-[120px] h-9 rounded-xl bg-primary text-primary-foreground font-semibold text-xs shadow-md hover:scale-105 active:scale-95 transition-all focus:outline-none"
+            className="flex items-center justify-center gap-2 w-full max-w-[120px] h-9 rounded-2xl bg-primary text-primary-foreground font-semibold text-xs shadow-md hover:scale-105 active:scale-97 transition-all focus:outline-none"
           >
             <Pencil className="h-3.5 w-3.5 stroke-[2.5]" />
             แก้ไขสินค้า
@@ -89,7 +91,7 @@ export function ProductCardAdmin({ product, onEdit, onDelete }: ProductCardAdmin
               onDelete(product)
               setShowActions(false)
             }}
-            className="flex items-center justify-center gap-2 w-full max-w-[120px] h-9 rounded-xl bg-destructive text-destructive-foreground font-semibold text-xs shadow-md hover:scale-105 active:scale-95 transition-all focus:outline-none"
+            className="flex items-center justify-center gap-2 w-full max-w-[120px] h-9 rounded-2xl bg-destructive text-destructive-foreground font-semibold text-xs shadow-md hover:scale-105 active:scale-97 transition-all focus:outline-none"
           >
             <Trash2 className="h-3.5 w-3.5 stroke-[2.5]" />
             ลบสินค้า

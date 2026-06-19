@@ -11,9 +11,16 @@ import { Product } from "@/types"
 import { calculateBestPromotion, Promotion } from "@/lib/promotionEngine"
 import { useCartStore } from "@/store/cartStore"
 
+import { useProductStore } from "@/store/productStore"
+import { usePromotionStore } from "@/store/promotionStore"
+import { useDashboardStore } from "@/store/dashboardStore"
+import { useSaleHistoryStore } from "@/store/saleHistoryStore"
+
 export default function POSPage() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [promotions, setPromotions] = useState<Promotion[]>([])
+  const products = useProductStore((state) => state.products)
+  const fetchProducts = useProductStore((state) => state.fetchProducts)
+  const promotions = usePromotionStore((state) => state.promotions)
+  const fetchPromotions = usePromotionStore((state) => state.fetchPromotions)
   const [isLoading, setIsLoading] = useState(true)
   
   // Checkout Dialog State
@@ -26,21 +33,17 @@ export default function POSPage() {
   const clearCart = useCartStore((state) => state.clearCart)
 
   const loadData = useCallback(async () => {
-    const [productsRes, promosRes] = await Promise.all([
-      fetch("/api/products?active=true&limit=1000&minimal=true"),
-      fetch("/api/promotions")
-    ])
-
-    if (!productsRes.ok || !promosRes.ok) {
-      throw new Error("Failed to fetch data")
+    try {
+      // Fetch promotions via store (cached unless forced)
+      await fetchPromotions()
+      
+      // Fetch products via store (cached unless forced)
+      await fetchProducts()
+    } catch (error) {
+      console.error(error)
+      throw error
     }
-
-    const productsData = await productsRes.json()
-    const promosData = await promosRes.json()
-
-    setProducts(productsData.products)
-    setPromotions(promosData)
-  }, [])
+  }, [fetchPromotions, fetchProducts])
 
   useEffect(() => {
     let isMounted = true
@@ -68,15 +71,12 @@ export default function POSPage() {
   const handleCheckoutSuccess = (soldItems: { productId: number; quantity: number }[]) => {
     setIsCheckoutOpen(false)
     clearCart()
-    setProducts((prevProducts) =>
-      prevProducts.map((p) => {
-        const sold = soldItems.find((item) => item.productId === p.id)
-        if (sold) {
-          return { ...p, stock: Math.max(0, p.stock - sold.quantity) }
-        }
-        return p
-      })
-    )
+    // Force refresh products in the store to sync stock with DB
+    fetchProducts(true)
+    // Clear dashboard stats cache so it recalculates on next visit
+    useDashboardStore.getState().clearCache()
+    // Clear sales history cache so it re-fetches the latest sales data
+    useSaleHistoryStore.getState().clearCache()
   }
 
   // Calculate totals for checkout

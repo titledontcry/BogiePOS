@@ -34,16 +34,18 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
       cell: ({ row }) => {
         const id = row.getValue("id") as number
         return (
-          <span className="font-mono text-xs bg-muted border border-border/40 px-2 py-0.5 rounded font-semibold text-foreground/80">
-            #{id.toString().padStart(6, '0')}
-          </span>
+          <div className="flex justify-center">
+            <span className="font-mono text-xs bg-muted border border-border/40 px-2 py-0.5 rounded font-semibold text-foreground/80">
+              #{id.toString().padStart(6, '0')}
+            </span>
+          </div>
         )
       }
     },
     {
       accessorKey: "createdAt",
       header: "วันที่-เวลา",
-      cell: ({ row }) => <div className="text-foreground/90">{formatDate(row.getValue("createdAt") as string)}</div>
+      cell: ({ row }) => <div className="text-foreground/90 text-center">{formatDate(row.getValue("createdAt") as string)}</div>
     },
     {
       id: "items",
@@ -51,7 +53,7 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
       cell: ({ row }) => {
         const items = row.original.items
         const totalQty = items.reduce((sum, item) => sum + item.quantity, 0)
-        return <div className="tabular-nums font-semibold text-foreground/90">{totalQty} ชิ้น</div>
+        return <div className="tabular-nums font-semibold text-foreground/90 text-center">{totalQty} ชิ้น</div>
       }
     },
     {
@@ -60,8 +62,8 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
       cell: ({ row }) => {
         const s = row.original
         const totalDiscount = s.promotionDiscount + s.manualDiscount
-        if (totalDiscount === 0) return <div className="text-muted-foreground">-</div>
-        return <div className="text-[var(--success)] font-bold tabular-nums">-{formatCurrency(totalDiscount)}</div>
+        if (totalDiscount === 0) return <div className="text-muted-foreground text-center">-</div>
+        return <div className="text-[var(--success)] font-bold tabular-nums text-center">-{formatCurrency(totalDiscount)}</div>
       }
     },
     {
@@ -69,7 +71,7 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
       header: "ยอดสุทธิ",
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("total"))
-        return <div className="font-extrabold text-foreground tabular-nums">{formatCurrency(amount)}</div>
+        return <div className="font-extrabold text-foreground tabular-nums text-center">{formatCurrency(amount)}</div>
       },
     },
     {
@@ -77,7 +79,13 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
       header: "หมายเหตุ",
       cell: ({ row }) => {
         const note = row.original.note
-        return note ? <Badge variant="outline" className="text-xs truncate max-w-[150px]">{note}</Badge> : <div className="text-muted-foreground">-</div>
+        return note ? (
+          <div className="flex justify-center">
+            <Badge variant="outline" className="text-xs truncate max-w-[150px]">{note}</Badge>
+          </div>
+        ) : (
+          <div className="text-muted-foreground text-center">-</div>
+        )
       }
     },
     {
@@ -85,14 +93,16 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
       cell: ({ row }) => {
         const sale = row.original
         return (
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 gap-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
-            onClick={() => onViewDetail(sale)}
-          >
-            <IconEye className="h-4 w-4 stroke-[2]" /> ดูบิล
-          </Button>
+          <div className="flex justify-center">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 gap-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
+              onClick={() => onViewDetail(sale)}
+            >
+              <IconEye className="h-4 w-4 stroke-[2]" /> ดูบิล
+            </Button>
+          </div>
         )
       },
     },
@@ -111,15 +121,10 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="hover:bg-transparent">
               {headerGroup.headers.map((header) => {
-                const id = header.id
-                const isRight = id === "items" || id === "discount" || id === "total" || id === "actions"
                 return (
                   <TableHead 
                     key={header.id} 
-                    className={cn(
-                      "text-[11px] font-bold uppercase tracking-wider text-muted-foreground h-11 px-4 align-middle border-b border-border/40",
-                      isRight ? "text-right" : "text-left"
-                    )}
+                    className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground h-11 px-4 align-middle border-b border-border/40 text-center"
                   >
                     {header.isPlaceholder
                       ? null
@@ -142,15 +147,10 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
                 className="hover:bg-muted/30 transition-colors"
               >
                 {row.getVisibleCells().map((cell) => {
-                  const id = cell.column.id
-                  const isRight = id === "items" || id === "discount" || id === "total" || id === "actions"
                   return (
                     <TableCell 
                       key={cell.id}
-                      className={cn(
-                        "px-4 py-3.5 align-middle border-b border-border/40",
-                        isRight ? "text-right" : "text-left"
-                      )}
+                      className="align-middle border-b border-border/40 text-center"
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>

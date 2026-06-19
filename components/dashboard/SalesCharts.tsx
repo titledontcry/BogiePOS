@@ -71,7 +71,7 @@ export function SalesCharts({ dailySales, monthlySales }: SalesChartsProps) {
                 <Tooltip 
                   formatter={(value: any) => [formatCurrency(Number(value) || 0), "ยอดขาย"]}
                   labelStyle={{ color: "var(--foreground)", fontWeight: "bold" }}
-                  contentStyle={{ borderRadius: "14px", border: "1px solid var(--border)", boxShadow: "var(--shadow-soft)" }}
+                  contentStyle={{ borderRadius: "16px", border: "1px solid var(--border)", boxShadow: "var(--shadow-soft)" }}
                 />
                 <Area 
                   type="monotone" 
@@ -116,12 +116,12 @@ export function SalesCharts({ dailySales, monthlySales }: SalesChartsProps) {
                   formatter={(value: any) => [formatCurrency(Number(value) || 0), "ยอดขาย"]}
                   labelStyle={{ color: "var(--foreground)", fontWeight: "bold" }}
                   cursor={{ fill: "var(--accent)" }}
-                  contentStyle={{ borderRadius: "14px", border: "1px solid var(--border)", boxShadow: "var(--shadow-soft)" }}
+                  contentStyle={{ borderRadius: "16px", border: "1px solid var(--border)", boxShadow: "var(--shadow-soft)" }}
                 />
                 <Bar 
                   dataKey="revenue" 
                   fill="var(--primary)" 
-                  radius={[10, 10, 4, 4]} 
+                  radius={[12, 12, 4, 4]} 
                   barSize={40}
                 />
               </BarChart>

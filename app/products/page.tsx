@@ -1,101 +1,93 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useMemo } from "react"
 import { Plus, Search, RefreshCw, Package, AlertCircle, PackageX, Layers, Filter } from "lucide-react"
+import { useProductStore } from "@/store/productStore"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
 import { ProductGridAdmin } from "@/components/products/ProductGridAdmin"
 import { ProductForm } from "@/components/products/ProductForm"
 import { Product } from "@/types"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([])
+  const allProducts = useProductStore((state) => state.products)
+  const summary = useProductStore((state) => state.summary)
+  const categories = useProductStore((state) => state.categories)
+  const storeFetchProducts = useProductStore((state) => state.fetchProducts)
+  const storeIsLoading = useProductStore((state) => state.isLoading)
+
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState("")
   
   // Filters
   const [statusFilter, setStatusFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
-  const [categories, setCategories] = useState<string[]>([])
   
-  // Summary Stats
-  const [summary, setSummary] = useState({
-    total: 0,
-    inStock: 0,
-    lowStock: 0,
-    outOfStock: 0
-  })
-
   // Pagination
   const [page, setPage] = useState(1)
-  const [totalItems, setTotalItems] = useState(0)
   const limit = 40
   
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | undefined>(undefined)
 
-  const fetchSummary = useCallback(async () => {
-    try {
-      const res = await fetch("/api/products/summary")
-      if (res.ok) {
-        const data = await res.json()
-        setSummary(data)
-      }
-    } catch (error) {
-      console.error("Failed to fetch summary", error)
-    }
-  }, [])
+  // Delete Confirmation state
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false)
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null)
 
-  const fetchProducts = useCallback(async (isInitial = false) => {
-    setIsLoading(true)
-    try {
-      const url = new URL("/api/products", window.location.origin)
-      if (search) url.searchParams.append("search", search)
-      if (statusFilter !== "all") url.searchParams.append("status", statusFilter)
-      if (categoryFilter !== "all") url.searchParams.append("category", categoryFilter)
-      url.searchParams.append("page", page.toString())
-      url.searchParams.append("limit", limit.toString())
-      
-      const res = await fetch(url.toString())
-      if (!res.ok) throw new Error("Failed to fetch products")
-      
-      const data = await res.json()
-      setProducts(data.products)
-      setTotalItems(data.total)
-      
-      // Extract unique categories only on initial full load or if we don't have them
-      if (isInitial || categories.length === 0) {
-        const allRes = await fetch("/api/products?limit=1000&minimal=true")
-        if (allRes.ok) {
-          const allData = await allRes.json()
-          const uniqueCategories = Array.from(new Set(allData.products.map((p: any) => p.category))) as string[]
-          setCategories(uniqueCategories.filter(Boolean).sort())
-        }
-      }
-    } catch (error) {
-      toast.error("ไม่สามารถดึงข้อมูลสินค้าได้")
-      console.error(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [search, statusFilter, categoryFilter, page, categories.length])
-
+  // Initial load from store
   useEffect(() => {
-    fetchSummary()
-  }, [fetchSummary])
+    const init = async () => {
+      setIsLoading(true)
+      try {
+        await storeFetchProducts()
+      } catch (error) {
+        toast.error("ไม่สามารถโหลดข้อมูลสินค้าได้")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    init()
+  }, [storeFetchProducts])
 
-  useEffect(() => {
-    // Debounce search
-    const timer = setTimeout(() => {
-      fetchProducts(true)
-    }, 500)
-    return () => clearTimeout(timer)
-  }, [fetchProducts, search, statusFilter, categoryFilter]) // Reset on filter change
+  // Client-side filtering and searching
+  const filteredProducts = useMemo(() => {
+    return allProducts.filter((product) => {
+      // 1. Search filter
+      const matchesSearch = !search
+        ? true
+        : product.name.toLowerCase().includes(search.toLowerCase()) ||
+          product.barcode?.includes(search)
+
+      // 2. Status filter
+      let matchesStatus = true
+      if (statusFilter === "in_stock") {
+        matchesStatus = product.stock > 0
+      } else if (statusFilter === "low_stock") {
+        matchesStatus = product.stock > 0 && product.stock <= 5
+      } else if (statusFilter === "out_of_stock") {
+        matchesStatus = product.stock <= 0
+      }
+
+      // 3. Category filter
+      const matchesCategory =
+        categoryFilter === "all" || product.category === categoryFilter
+
+      return matchesSearch && matchesStatus && matchesCategory
+    })
+  }, [allProducts, search, statusFilter, categoryFilter])
+
+  // Paginate filtered products
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (page - 1) * limit
+    return filteredProducts.slice(startIndex, startIndex + limit)
+  }, [filteredProducts, page, limit])
+
+  const totalItems = filteredProducts.length
 
   const handleAdd = () => {
     setEditingProduct(undefined)
@@ -107,27 +99,43 @@ export default function ProductsPage() {
     setIsDialogOpen(true)
   }
 
-  const handleDelete = async (product: Product) => {
+  const handleDeleteClick = (product: Product) => {
+    setProductToDelete(product)
+    setIsDeleteConfirmOpen(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!productToDelete) return
+    setIsLoading(true)
     try {
-      const res = await fetch(`/api/products/${product.id}`, {
+      const res = await fetch(`/api/products/${productToDelete.id}`, {
         method: "DELETE",
       })
       
       if (!res.ok) throw new Error("Failed to delete product")
       
       toast.success("ลบสินค้าสำเร็จ")
-      fetchProducts()
-      fetchSummary()
+      await storeFetchProducts(true) // Force refresh cache
     } catch (error) {
       toast.error("ไม่สามารถลบสินค้าได้")
       console.error(error)
+    } finally {
+      setIsLoading(false)
+      setIsDeleteConfirmOpen(false)
+      setProductToDelete(null)
     }
   }
 
-  const handleSuccess = () => {
+  const handleSuccess = async () => {
     setIsDialogOpen(false)
-    fetchProducts()
-    fetchSummary()
+    setIsLoading(true)
+    try {
+      await storeFetchProducts(true) // Force refresh cache
+    } catch (error) {
+      toast.error("ไม่สามารถรีเฟรชข้อมูลได้")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const totalPages = Math.ceil(totalItems / limit)
@@ -246,32 +254,39 @@ export default function ProductsPage() {
           <Button 
             variant="outline" 
             size="icon"
-            onClick={() => fetchProducts(true)} 
-            disabled={isLoading}
+            onClick={async () => {
+              setIsLoading(true)
+              try {
+                await storeFetchProducts(true)
+              } finally {
+                setIsLoading(false)
+              }
+            }} 
+            disabled={isLoading || storeIsLoading}
             className="shrink-0 h-10 w-10 border-transparent bg-muted/30 hover:bg-muted/60"
             title="รีเฟรช"
           >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : 'text-muted-foreground'}`} />
+            <RefreshCw className={`h-4 w-4 ${isLoading || storeIsLoading ? 'animate-spin' : 'text-muted-foreground'}`} />
           </Button>
         </div>
       </div>
 
       {/* Content Grid */}
-      {isLoading && products.length === 0 ? (
+      {(isLoading || storeIsLoading) && allProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
           <RefreshCw className="h-8 w-8 animate-spin mb-4 text-primary/50" />
           <p>กำลังโหลดข้อมูลสินค้า...</p>
         </div>
       ) : (
         <ProductGridAdmin 
-          data={products} 
+          data={paginatedProducts} 
           onEdit={handleEdit} 
-          onDelete={handleDelete} 
+          onDelete={handleDeleteClick} 
         />
       )}
 
       {/* Footer / Pagination */}
-      {!isLoading && products.length > 0 && (
+      {!isLoading && filteredProducts.length > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 pb-8 border-t border-border/40 mt-6">
           <div className="text-sm text-muted-foreground">
             แสดง {((page - 1) * limit) + 1} ถึง {Math.min(page * limit, totalItems)} จากทั้งหมด <span className="font-semibold text-foreground">{totalItems}</span> รายการ
@@ -312,6 +327,29 @@ export default function ProductsPage() {
             initialData={editingProduct} 
             onSuccess={handleSuccess} 
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog for Delete Confirmation */}
+      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">ยืนยันการลบสินค้า</DialogTitle>
+            <DialogDescription>
+              การดำเนินการนี้ไม่สามารถย้อนกลับได้ สินค้าจะถูกลบออกจากระบบถาวร
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2 text-sm">
+            คุณต้องการลบสินค้า <span className="font-bold text-foreground">"{productToDelete?.name}"</span> ใช่หรือไม่?
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setIsDeleteConfirmOpen(false)}>
+              ยกเลิก
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              ยืนยันการลบ
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

@@ -8,6 +8,7 @@ import {
   Tag, 
   RefreshCw 
 } from "lucide-react"
+import { useDashboardStore } from "@/store/dashboardStore"
 import { toast } from "sonner"
 
 import { StatCard } from "@/components/dashboard/StatCard"
@@ -28,32 +29,33 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null)
+  const cache = useDashboardStore((state) => state.cache)
+  const storeFetchDashboard = useDashboardStore((state) => state.fetchDashboard)
+  const storeIsLoading = useDashboardStore((state) => state.isLoading)
+
   const [isLoading, setIsLoading] = useState(true)
   const [period, setPeriod] = useState("today") // today, week, month, all
 
-  const fetchDashboard = useCallback(async () => {
+  const data = cache[period] || null
+
+  const fetchDashboard = useCallback(async (force = false) => {
     setIsLoading(true)
     try {
-      const res = await fetch(`/api/dashboard?period=${period}`)
-      if (!res.ok) throw new Error("Failed to fetch dashboard data")
-      
-      const json = await res.json()
-      setData(json)
+      await storeFetchDashboard(period, force)
     } catch (error) {
       toast.error("ไม่สามารถดึงข้อมูลภาพรวมได้")
       console.error(error)
     } finally {
       setIsLoading(false)
     }
-  }, [period])
+  }, [period, storeFetchDashboard])
 
   useEffect(() => {
     fetchDashboard()
   }, [fetchDashboard])
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border bg-card px-5 py-5 shadow-[var(--shadow-soft)]">
         <div>
@@ -76,12 +78,12 @@ export default function DashboardPage() {
             </SelectContent>
           </Select>
           <button 
-            onClick={fetchDashboard} 
-            disabled={isLoading}
-            className="grid h-11 w-11 place-items-center rounded-xl border bg-card hover:bg-accent transition-colors disabled:opacity-50"
+            onClick={() => fetchDashboard(true)} 
+            disabled={isLoading || storeIsLoading}
+            className="grid h-11 w-11 place-items-center rounded-2xl border bg-card hover:bg-accent transition-colors disabled:opacity-50"
             aria-label="รีเฟรชข้อมูลภาพรวม"
           >
-            <RefreshCw className={`h-4 w-4 text-muted-foreground ${isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 text-muted-foreground ${isLoading || storeIsLoading ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </div>

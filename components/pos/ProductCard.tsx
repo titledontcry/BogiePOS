@@ -17,6 +17,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const inCart = cartItems.find(i => i.productId === product.id)?.quantity || 0
   const remainingStock = product.stock - inCart
   const isOutOfStock = remainingStock <= 0
+  const isLowStock = remainingStock > 0 && remainingStock <= 5
 
   const handleAdd = () => {
     if (isOutOfStock) return
@@ -37,10 +38,10 @@ export function ProductCard({ product }: ProductCardProps) {
       onClick={handleAdd}
       disabled={isOutOfStock}
       aria-label={`${isOutOfStock ? "สินค้าหมด" : "เพิ่มสินค้า"} ${product.name} ราคา ${formatCurrency(product.price)} เหลือ ${remainingStock} ชิ้น`}
-      className={`group relative flex min-h-[128px] flex-col justify-between overflow-hidden rounded-2xl border bg-card p-4 text-left text-card-foreground shadow-[var(--shadow-soft)] will-change-transform transition-all duration-[var(--duration-normal)] ease-[var(--ease-out-expo)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+      className={`group relative flex min-h-[128px] flex-col justify-between overflow-hidden rounded-2xl border bg-card p-4 text-left text-card-foreground shadow-[var(--shadow-soft)] card-hover-transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
         isOutOfStock 
           ? "cursor-not-allowed opacity-65 grayscale" 
-          : "cursor-pointer hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)] active:scale-[0.96] active:shadow-[var(--shadow-soft)]"
+          : "cursor-pointer hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[var(--shadow-lift)] active:scale-[0.97] active:shadow-[var(--shadow-soft)]"
       }`}
     >
       <div className="space-y-1 z-10">
@@ -54,7 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="font-extrabold text-primary">
           {formatCurrency(product.price)}
         </div>
-        <Badge variant={remainingStock > 5 ? "secondary" : "destructive"} className="text-[10px] px-1.5 py-0">
+        <Badge variant={isOutOfStock ? "destructive" : isLowStock ? "warning" : "success"} className="text-[10px] px-1.5 py-0">
           เหลือ {remainingStock}
         </Badge>
       </div>

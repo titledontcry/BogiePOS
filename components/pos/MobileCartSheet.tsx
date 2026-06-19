@@ -70,7 +70,7 @@ export function MobileCartSheet({ promotions, onCheckout }: MobileCartSheetProps
         <button
           onClick={() => setOpen(true)}
           aria-label={`ตะกร้าสินค้า ${totalItems} ชิ้น`}
-          className={`lg:hidden fixed right-4 bottom-22 z-40 flex items-center gap-2.5 rounded-full bg-white px-5 py-3.5 shadow-[0_4px_24px_rgba(0,0,0,0.10),0_1px_3px_rgba(0,0,0,0.06)] border border-border/30 will-change-transform transition-all duration-[var(--duration-normal)] ease-[var(--ease-out-expo)] active:scale-[0.93] active:shadow-[0_2px_8px_rgba(0,0,0,0.08)] ${
+          className={`lg:hidden fixed right-4 bottom-22 z-40 flex items-center gap-2.5 rounded-full bg-card px-5 py-3.5 shadow-[var(--shadow-lift)] border border-border/30 will-change-transform transition-all duration-[var(--duration-normal)] ease-[var(--ease-out-expo)] active:scale-[0.93] active:shadow-[var(--shadow-soft)] ${
             bounce ? "animate-[cartBounce_0.35s_var(--ease-spring)]" : ""
           }`}
         >
@@ -90,7 +90,7 @@ export function MobileCartSheet({ promotions, onCheckout }: MobileCartSheetProps
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="bottom"
-          className="rounded-t-3xl bg-white p-0 max-h-[85vh] flex flex-col"
+          className="rounded-t-3xl bg-card p-0 max-h-[85vh] flex flex-col"
         >
           {/* Drag handle */}
           <div className="flex justify-center pt-3 pb-1 shrink-0">
@@ -150,7 +150,7 @@ export function MobileCartSheet({ promotions, onCheckout }: MobileCartSheetProps
                     <div className="flex items-center gap-0.5 bg-muted/60 rounded-xl p-0.5 border">
                       <button
                         onClick={() => updateQty(item.productId, item.quantity - 1)}
-                        className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-white active:scale-[0.90] transition-all duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]"
+                        className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-background active:scale-[0.90] transition-all duration-[var(--duration-fast)] ease-[var(--ease-out-expo)]"
                         aria-label={`ลดจำนวน ${item.name}`}
                       >
                         <Minus className="h-3.5 w-3.5" />
@@ -161,7 +161,7 @@ export function MobileCartSheet({ promotions, onCheckout }: MobileCartSheetProps
                       <button
                         onClick={() => updateQty(item.productId, item.quantity + 1)}
                         disabled={item.quantity >= item.stock}
-                        className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-white active:scale-[0.90] transition-all duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] disabled:opacity-40"
+                        className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-background active:scale-[0.90] transition-all duration-[var(--duration-fast)] ease-[var(--ease-out-expo)] disabled:opacity-40"
                         aria-label={`เพิ่มจำนวน ${item.name}`}
                       >
                         <Plus className="h-3.5 w-3.5" />

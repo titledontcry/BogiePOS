@@ -51,28 +51,29 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
       header: "ประเภท",
       cell: ({ row }) => {
         const type = row.getValue("type") as string
+        let badge = null
         if (type === "FIXED_DISCOUNT") {
-          return (
+          badge = (
             <Badge className="bg-sky-50 text-sky-700 border-sky-100 hover:bg-sky-100/80 dark:bg-sky-950/30 dark:text-sky-400 dark:border-sky-900/50 font-semibold">
               ลดราคาคงที่
             </Badge>
           )
-        }
-        if (type === "PERCENT_DISCOUNT") {
-          return (
+        } else if (type === "PERCENT_DISCOUNT") {
+          badge = (
             <Badge className="bg-amber-50 text-amber-700 border-amber-100 hover:bg-amber-100/80 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-900/50 font-semibold">
               ลดเปอร์เซ็นต์
             </Badge>
           )
-        }
-        if (type === "BUNDLE") {
-          return (
+        } else if (type === "BUNDLE") {
+          badge = (
             <Badge className="bg-violet-50 text-violet-700 border-violet-100 hover:bg-violet-100/80 dark:bg-violet-950/30 dark:text-violet-400 dark:border-violet-800/50 font-semibold">
               ซื้อเป็นชุด
             </Badge>
           )
+        } else {
+          badge = <Badge>{type}</Badge>
         }
-        return <Badge>{type}</Badge>
+        return <div className="flex justify-center">{badge}</div>
       }
     },
     {
@@ -81,7 +82,7 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
       cell: ({ row }) => {
         const p = row.original
         return (
-          <div className="font-bold text-foreground/90">
+          <div className="font-bold text-foreground/90 text-center">
             {p.type === "FIXED_DISCOUNT" && `ลด ${formatCurrency(p.value)}`}
             {p.type === "PERCENT_DISCOUNT" && `ลด ${p.value}%`}
             {p.type === "BUNDLE" && `ซื้อ ${p.quantityRequired} ชิ้น ราคา ${formatCurrency(p.specialPrice)}`}
@@ -96,7 +97,7 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
         const p = row.original
         const hasCategories = p.applicableCategories && p.applicableCategories.length > 0
         return (
-          <div className="flex flex-wrap gap-1 items-center max-w-[240px]">
+          <div className="flex flex-wrap gap-1 items-center justify-center max-w-[240px] mx-auto">
             {hasCategories ? (
               p.applicableCategories.map((cat) => (
                 <Badge 
@@ -124,7 +125,7 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
       header: "สถานะ",
       cell: ({ row }) => {
         const isActive = row.getValue("isActive") as boolean
-        return isActive ? (
+        const badge = isActive ? (
           <Badge className="bg-[var(--success-soft)] text-[var(--success)] hover:bg-[var(--success-soft)] border-transparent font-bold">
             เปิดใช้งาน
           </Badge>
@@ -133,6 +134,7 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
             ปิด
           </Badge>
         )
+        return <div className="flex justify-center">{badge}</div>
       }
     },
     {
@@ -141,27 +143,29 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
         const promotion = row.original
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted rounded-lg">
-                <span className="sr-only">Open menu</span>
-                <IconDots className="h-4 w-4 text-muted-foreground" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl">
-              <DropdownMenuLabel>จัดการ</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onEdit(promotion)} className="rounded-lg">
-                <IconPencil className="mr-2 h-4 w-4 stroke-[2]" /> แก้ไข
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={() => setDeletePromo(promotion)}
-                className="text-destructive focus:text-destructive rounded-lg"
-              >
-                <IconTrash className="mr-2 h-4 w-4 stroke-[2]" /> ลบ
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex justify-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-muted rounded-full">
+                  <span className="sr-only">Open menu</span>
+                  <IconDots className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="rounded-xl">
+                <DropdownMenuLabel>จัดการ</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => onEdit(promotion)} className="rounded-lg">
+                  <IconPencil className="mr-2 h-4 w-4 stroke-[2]" /> แก้ไข
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => setDeletePromo(promotion)}
+                  className="text-destructive focus:text-destructive rounded-lg"
+                >
+                  <IconTrash className="mr-2 h-4 w-4 stroke-[2]" /> ลบ
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         )
       },
     },
@@ -182,14 +186,13 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 {headerGroup.headers.map((header) => {
                   const id = header.id
-                  const isCenter = id === "isActive"
-                  const isRight = id === "actions"
+                  const isCenter = id === "type" || id === "details" || id === "applicableCategories" || id === "isActive" || id === "actions"
                   return (
                     <TableHead 
                       key={header.id} 
                       className={cn(
                         "text-[11px] font-bold uppercase tracking-wider text-muted-foreground h-11 px-4 align-middle border-b border-border/40",
-                        isCenter ? "text-center" : isRight ? "text-right" : "text-left"
+                        isCenter ? "text-center" : "text-left"
                       )}
                     >
                       {header.isPlaceholder
@@ -214,14 +217,13 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
                 >
                   {row.getVisibleCells().map((cell) => {
                     const id = cell.column.id
-                    const isCenter = id === "isActive"
-                    const isRight = id === "actions"
+                    const isCenter = id === "type" || id === "details" || id === "applicableCategories" || id === "isActive" || id === "actions"
                     return (
                       <TableCell 
                         key={cell.id}
                         className={cn(
-                          "px-4 py-3.5 align-middle border-b border-border/40",
-                          isCenter ? "text-center" : isRight ? "text-right" : "text-left"
+                          "align-middle border-b border-border/40",
+                          isCenter ? "text-center" : "text-left"
                         )}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -251,8 +253,8 @@ export function PromotionTable({ data, onEdit, onDelete }: PromotionTableProps) 
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" className="rounded-xl" onClick={() => setDeletePromo(null)}>ยกเลิก</Button>
-            <Button variant="destructive" className="rounded-xl" onClick={() => {
+            <Button variant="outline" className="rounded-2xl" onClick={() => setDeletePromo(null)}>ยกเลิก</Button>
+            <Button variant="destructive" className="rounded-2xl" onClick={() => {
               if (deletePromo) onDelete(deletePromo)
               setDeletePromo(null)
             }}>ลบโปรโมชั่น</Button>

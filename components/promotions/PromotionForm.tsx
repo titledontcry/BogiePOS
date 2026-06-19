@@ -177,7 +177,7 @@ export function PromotionForm({ initialData, onSuccess }: PromotionFormProps) {
         />
 
         {watchScope === "CATEGORIES" && (
-          <div className="space-y-2 bg-muted/30 p-3 rounded-lg border border-dashed animate-in fade-in duration-200">
+          <div className="space-y-2 bg-muted/30 p-3 rounded-lg border border-dashed animate-fade-in-scale">
             <FormLabel className="text-xs font-semibold">เลือกหมวดหมู่ที่เข้าร่วมโปรโมชั่น</FormLabel>
             {categories.length === 0 ? (
               <p className="text-xs text-muted-foreground py-2">ไม่พบหมวดหมู่สินค้าในระบบ (กรุณาเพิ่มสินค้าที่มีหมวดหมู่ก่อน)</p>
