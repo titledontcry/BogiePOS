@@ -57,10 +57,15 @@ export function MobileCartSheet({ promotions, onCheckout }: MobileCartSheetProps
     prevCount.current = totalItems
   }, [totalItems])
 
+  // Auto-close sheet when cart is cleared (e.g., after successful checkout)
+  useEffect(() => {
+    if (items.length === 0 && open) {
+      setOpen(false)
+    }
+  }, [items.length, open])
+
   const handleCheckout = () => {
-    setOpen(false)
-    // Small delay (longer than the 250ms sheet exit animation) so sheet closes completely before dialog opens
-    setTimeout(() => onCheckout(), 350)
+    onCheckout()
   }
 
   return (
