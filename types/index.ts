@@ -41,6 +41,7 @@ export interface Sale {
   manualDiscount: number
   total: number
   note?: string | null
+  paymentMethod?: string
   createdAt: string
   promotionId?: number | null
   promotion?: Promotion | null

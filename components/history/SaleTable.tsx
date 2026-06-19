@@ -75,6 +75,28 @@ export function SaleTable({ data, onViewDetail }: SaleTableProps) {
       },
     },
     {
+      accessorKey: "paymentMethod",
+      header: "ช่องทางชำระ",
+      cell: ({ row }) => {
+        const method = row.original.paymentMethod || "CASH"
+        return (
+          <div className="flex justify-center">
+            <Badge 
+              variant={method === "PROMPTPAY" ? "default" : "secondary"}
+              className={cn(
+                "text-[10px] px-2 py-0.5 rounded-full font-bold select-none",
+                method === "PROMPTPAY" 
+                  ? "bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 shadow-none" 
+                  : "bg-muted text-muted-foreground border-border/40 hover:bg-muted/80 shadow-none"
+              )}
+            >
+              {method === "PROMPTPAY" ? "PromptPay" : "เงินสด"}
+            </Badge>
+          </div>
+        )
+      }
+    },
+    {
       id: "note",
       header: "หมายเหตุ",
       cell: ({ row }) => {

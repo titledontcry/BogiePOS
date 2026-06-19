@@ -8,9 +8,11 @@ import LoginForm from "@/components/auth/LoginForm"
 import { useAuthStore } from "@/store/authStore"
 import { usePathname } from "next/navigation"
 import { Loader2 } from "lucide-react"
+import { useSettingsStore } from "@/store/settingsStore"
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitialized, checkSession } = useAuthStore()
+  const fetchSettings = useSettingsStore((state) => state.fetchSettings)
   const pathname = usePathname()
   const isPosPage = pathname === "/pos"
   const [showDashboard, setShowDashboard] = useState(false)
@@ -18,7 +20,8 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     checkSession()
-  }, [checkSession])
+    fetchSettings()
+  }, [checkSession, fetchSettings])
 
   useEffect(() => {
     if (isAuthenticated) {

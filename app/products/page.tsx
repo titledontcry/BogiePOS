@@ -144,11 +144,16 @@ export default function ProductsPage() {
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full">
       {/* Top Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">จัดการสินค้า</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            เพิ่ม แก้ไข ลบ และจัดการสต๊อกสินค้าทั้งหมดในร้าน
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-primary/10 text-primary rounded-2xl shrink-0">
+            <Package className="h-6 w-6 stroke-[2]" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">จัดการสินค้า</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              เพิ่ม แก้ไข ลบ และจัดการสต๊อกสินค้าทั้งหมดในร้าน
+            </p>
+          </div>
         </div>
         <Button onClick={handleAdd} className="gap-2 shrink-0">
           <Plus className="h-4 w-4" />
@@ -207,7 +212,7 @@ export default function ProductsPage() {
               setSearch(e.target.value)
               setPage(1)
             }}
-            className="pl-10 h-10 bg-muted/30 border-transparent hover:bg-muted/50 focus-visible:bg-transparent"
+            className="pl-10 min-h-[48px] bg-muted/30 border-transparent hover:bg-muted/50 focus-visible:bg-transparent"
           />
         </div>
         
@@ -219,7 +224,7 @@ export default function ProductsPage() {
               setPage(1)
             }}
           >
-            <SelectTrigger className="w-full sm:w-[160px] h-10 bg-muted/30 border-transparent">
+            <SelectTrigger className="w-full sm:w-[160px] min-h-[48px] bg-muted/30 border-transparent">
               <div className="flex items-center gap-2">
                 <Filter className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                 <SelectValue placeholder="หมวดหมู่" />
@@ -240,7 +245,7 @@ export default function ProductsPage() {
               setPage(1)
             }}
           >
-            <SelectTrigger className="w-full sm:w-[150px] h-10 bg-muted/30 border-transparent">
+            <SelectTrigger className="w-full sm:w-[150px] min-h-[48px] bg-muted/30 border-transparent">
               <SelectValue placeholder="สถานะ" />
             </SelectTrigger>
             <SelectContent>
@@ -263,7 +268,7 @@ export default function ProductsPage() {
               }
             }} 
             disabled={isLoading || storeIsLoading}
-            className="shrink-0 h-10 w-10 border-transparent bg-muted/30 hover:bg-muted/60"
+            className="shrink-0 min-h-[48px] w-12 border-transparent bg-muted/30 hover:bg-muted/60"
             title="รีเฟรช"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading || storeIsLoading ? 'animate-spin' : 'text-muted-foreground'}`} />

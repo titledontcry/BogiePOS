@@ -98,3 +98,22 @@ model User {
 
   @@map("users")
 }
+
+model StoreSetting {
+  id              Int      @id @default(1)
+  storeName       String   @default("หจก.น้องพรีม")
+  storeBranch     String   @default("สำนักงานใหญ่ (Branch 00000)")
+  storeAddress    String   @default("แขวงเสนานิคม เขตจตุจักร กรุงเทพมหานคร")
+  storeTaxId      String   @default("")
+  storePhone      String   @default("064-514-5498")
+  receiptFooter   String   @default("ขอบคุณที่อุดหนุนสินค้าของเรา / Thank You for Your Business. สินค้าซื้อแล้วไม่รับเปลี่ยนหรือคืน / No Exchange, No Return.")
+  enableVat       Boolean  @default(true)
+  vatRate         Float    @default(7.0)
+  enablePromptpay Boolean  @default(true)
+  omiseMode       String   @default("test") // test or live
+  omisePublicKey  String   @default("")
+  omiseSecretKey  String   @default("")
+  updatedAt       DateTime @updatedAt
+
+  @@map("store_settings")
+}

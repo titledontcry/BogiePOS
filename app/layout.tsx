@@ -1,11 +1,15 @@
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "sonner";
 import ClientLayout from "./client-layout";
 
-const inter = Inter({ subsets: ["latin"] });
+const sfProTH = localFont({
+  src: "../SFProTH_regular.woff.ttf",
+  variable: "--font-sfpro",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "BogiePOS — ระบบขายหน้าร้าน",
@@ -18,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" suppressHydrationWarning className={inter.className}>
+    <html lang="th" suppressHydrationWarning className={`${sfProTH.variable} antialiased`}>
       <body>
         <ThemeProvider
           attribute="class"

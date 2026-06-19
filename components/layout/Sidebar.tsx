@@ -73,14 +73,20 @@ export default function Sidebar() {
         {/* Bottom Actions (Settings & Logout) */}
         <div className="flex flex-col items-center gap-3 mt-auto shrink-0 w-full px-2 pt-4 border-t border-border/30">
           {/* Settings button */}
-          <button
-            className="h-12 w-12 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-200 active:scale-95 cursor-pointer group relative"
+          <Link
+            href="/settings"
+            className={cn(
+              'h-12 w-12 flex items-center justify-center rounded-xl transition-all duration-200 active:scale-95 group relative',
+              pathname === '/settings'
+                ? 'bg-[#1D1D1F] text-white shadow-md'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent/60',
+            )}
           >
-            <IconSettings stroke={1.75} className="h-5 w-5" />
+            <IconSettings stroke={pathname === '/settings' ? 2.25 : 1.75} className="h-5 w-5" />
             <span className="absolute left-16 opacity-0 translate-x-1 transition-all duration-200 rounded bg-neutral-900 p-2 text-xs text-white group-hover:opacity-100 group-hover:translate-x-0 z-50 whitespace-nowrap shadow-md pointer-events-none font-medium">
               ตั้งค่า
             </span>
-          </button>
+          </Link>
 
           {/* Logout button */}
           <button
