@@ -84,7 +84,7 @@ export default function POSPage() {
   const total = Math.max(0, subtotal - promotionResult.discount - manualDiscount)
 
   return (
-    <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden">
+    <div className="flex flex-col lg:flex-row h-full w-full overflow-hidden">
       {/* Product Grid — full height on mobile, shared on desktop */}
       <div className="flex-1 p-4 lg:p-6 overflow-hidden h-full">
         <ProductGrid products={products} isLoading={isLoading} />

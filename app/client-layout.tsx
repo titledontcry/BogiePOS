@@ -6,10 +6,13 @@ import TopBar from "@/components/layout/TopBar"
 import MobileNav from "@/components/layout/MobileNav"
 import LoginForm from "@/components/auth/LoginForm"
 import { useAuthStore } from "@/store/authStore"
+import { usePathname } from "next/navigation"
 import { Loader2 } from "lucide-react"
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isInitialized, checkSession } = useAuthStore()
+  const pathname = usePathname()
+  const isPosPage = pathname === "/pos"
   const [showDashboard, setShowDashboard] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
@@ -59,7 +62,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         <Sidebar />
         <div className="flex-1 flex flex-col min-w-0 h-full relative">
           <TopBar />
-          <main className="flex-1 overflow-y-auto pb-20 lg:pb-6 relative scroll-smooth">
+          <main className={`flex-1 relative scroll-smooth min-h-0 flex flex-col ${isPosPage ? "overflow-hidden h-full" : "overflow-y-auto pb-20 lg:pb-6"}`}>
             {children}
           </main>
         </div>
