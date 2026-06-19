@@ -59,6 +59,7 @@ model Sale {
   manualDiscount  Float    @default(0)
   total           Float
   note            String?
+  paymentMethod   String   @default("CASH")
   createdAt       DateTime @default(now())
 
   promotionId     Int?

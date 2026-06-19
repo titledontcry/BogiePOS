@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { items, promotionId, promotionDiscount, manualDiscount, subtotal, total, note } = body
+    const { items, promotionId, promotionDiscount, manualDiscount, subtotal, total, note, paymentMethod } = body
 
     if (!items || items.length === 0) {
       return NextResponse.json({ error: "ไม่มีสินค้าในตะกร้า" }, { status: 400 })
@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
           manualDiscount: parseFloat(manualDiscount || "0"),
           total: parseFloat(total),
           note: note || null,
+          paymentMethod: paymentMethod || "CASH",
           promotionId: promotionId || null,
           items: {
             create: items.map((item: { productId: number; quantity: number; unitPrice: number }) => ({
