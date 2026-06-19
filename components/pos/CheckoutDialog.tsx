@@ -76,11 +76,6 @@ export function CheckoutDialog({
         if (isMounted) {
           if (data.status === "successful") {
             setPaymentStatus("successful")
-            setTimeout(() => {
-              if (isMounted) {
-                submitSaleRecord("PROMPTPAY")
-              }
-            }, 1200)
           } else if (data.status === "failed") {
             setPaymentStatus("failed")
             toast.error("การชำระเงินล้มเหลว หรือหมดเวลาทำรายการ")
@@ -99,6 +94,16 @@ export function CheckoutDialog({
       clearInterval(intervalId)
     }
   }, [paymentStatus, chargeId])
+
+  // Trigger sale recording when paymentStatus changes to successful
+  useEffect(() => {
+    if (paymentStatus === "successful") {
+      const timer = setTimeout(() => {
+        submitSaleRecord("PROMPTPAY")
+      }, 1200)
+      return () => clearTimeout(timer)
+    }
+  }, [paymentStatus])
 
   const generateQrCode = async () => {
     setPaymentStatus("generating")
