@@ -319,7 +319,10 @@ export default function ProductsPage() {
 
       {/* Dialog for Add/Edit */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent 
+          className="sm:max-w-[500px]"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>{editingProduct ? "แก้ไขสินค้า" : "เพิ่มสินค้าใหม่"}</DialogTitle>
           </DialogHeader>

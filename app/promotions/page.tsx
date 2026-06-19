@@ -141,7 +141,10 @@ export default function PromotionsPage() {
 
       {/* Dialog for Add/Edit */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent 
+          className="sm:max-w-[425px]"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <DialogHeader>
             <DialogTitle>{editingPromo ? "แก้ไขโปรโมชั่น" : "สร้างโปรโมชั่นใหม่"}</DialogTitle>
           </DialogHeader>

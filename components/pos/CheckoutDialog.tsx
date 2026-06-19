@@ -88,7 +88,10 @@ export function CheckoutDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent 
+        className="sm:max-w-[425px]"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Receipt className="h-5 w-5 text-primary" /> ยืนยันการชำระเงิน
