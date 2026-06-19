@@ -11,6 +11,12 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "50")
     const activeOnly = searchParams.get("active") !== "false"
     const isMinimal = searchParams.get("minimal") === "true"
+    const status = searchParams.get("status") || "all"
+
+    const statusFilter = status === "in_stock" ? { stock: { gt: 0 } }
+      : status === "low_stock" ? { stock: { gt: 0, lte: 5 } }
+      : status === "out_of_stock" ? { stock: { equals: 0 } }
+      : {}
 
     const where = {
       ...(activeOnly && { isActive: true }),
@@ -21,6 +27,7 @@ export async function GET(request: NextRequest) {
         ],
       }),
       ...(category && category !== "all" && { category }),
+      ...statusFilter,
     }
 
     const select = isMinimal ? {

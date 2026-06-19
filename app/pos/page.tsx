@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { ProductGrid } from "@/components/pos/ProductGrid"
 import { CartPanel } from "@/components/pos/CartPanel"
 import { CheckoutDialog } from "@/components/pos/CheckoutDialog"
+import { MobileCartSheet } from "@/components/pos/MobileCartSheet"
 import { Product } from "@/types"
 import { calculateBestPromotion, Promotion } from "@/lib/promotionEngine"
 import { useCartStore } from "@/store/cartStore"
@@ -84,18 +85,24 @@ export default function POSPage() {
 
   return (
     <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden">
-      {/* Left Area: Product Grid */}
-      <div className="flex-1 p-4 lg:p-6 overflow-hidden h-[52vh] lg:h-full">
+      {/* Product Grid — full height on mobile, shared on desktop */}
+      <div className="flex-1 p-4 lg:p-6 overflow-hidden h-full">
         <ProductGrid products={products} isLoading={isLoading} />
       </div>
 
-      {/* Right Area: Cart Panel */}
-      <div className="w-full lg:w-[400px] xl:w-[450px] shrink-0 h-[48vh] lg:h-full pb-17 lg:pb-0 z-10 lg:z-auto">
+      {/* Cart Panel — desktop only */}
+      <div className="hidden lg:block w-full lg:w-[400px] xl:w-[450px] shrink-0 h-full">
         <CartPanel 
           promotions={promotions} 
           onCheckout={() => setIsCheckoutOpen(true)} 
         />
       </div>
+
+      {/* Mobile: Floating Cart FAB + Bottom Sheet */}
+      <MobileCartSheet
+        promotions={promotions}
+        onCheckout={() => setIsCheckoutOpen(true)}
+      />
 
       <CheckoutDialog
         open={isCheckoutOpen}

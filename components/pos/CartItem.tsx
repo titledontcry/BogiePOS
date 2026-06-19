@@ -52,7 +52,7 @@ export function CartItem({ productId }: CartItemProps) {
       <Button
         variant="ghost"
         size="icon"
-        className="h-9 w-9 ml-2 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100"
+        className="h-9 w-9 ml-2 text-muted-foreground hover:text-destructive transition-colors"
         onClick={() => removeItem(productId)}
         aria-label={`ลบ ${item.name} ออกจากตะกร้า`}
       >

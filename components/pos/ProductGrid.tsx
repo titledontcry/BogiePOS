@@ -70,7 +70,7 @@ export function ProductGrid({ products, isLoading }: ProductGridProps) {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-            className={`min-h-9 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap border cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+            className={`min-h-9 px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap border cursor-pointer select-none will-change-transform transition-all duration-[var(--duration-normal)] ease-[var(--ease-out-expo)] active:scale-[0.93] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 isActive
                   ? "bg-primary border-primary text-primary-foreground shadow-[var(--shadow-soft)]"
                   : "bg-card border-border text-muted-foreground hover:text-foreground hover:bg-accent"

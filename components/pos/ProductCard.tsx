@@ -37,10 +37,10 @@ export function ProductCard({ product }: ProductCardProps) {
       onClick={handleAdd}
       disabled={isOutOfStock}
       aria-label={`${isOutOfStock ? "สินค้าหมด" : "เพิ่มสินค้า"} ${product.name} ราคา ${formatCurrency(product.price)} เหลือ ${remainingStock} ชิ้น`}
-      className={`group relative flex min-h-[128px] flex-col justify-between overflow-hidden rounded-2xl border bg-card p-4 text-left text-card-foreground shadow-[var(--shadow-soft)] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+      className={`group relative flex min-h-[128px] flex-col justify-between overflow-hidden rounded-2xl border bg-card p-4 text-left text-card-foreground shadow-[var(--shadow-soft)] will-change-transform transition-all duration-[var(--duration-normal)] ease-[var(--ease-out-expo)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
         isOutOfStock 
           ? "cursor-not-allowed opacity-65 grayscale" 
-          : "cursor-pointer hover:-translate-y-0.5 hover:border-primary hover:shadow-[var(--shadow-lift)] active:scale-[0.98]"
+          : "cursor-pointer hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)] active:scale-[0.96] active:shadow-[var(--shadow-soft)]"
       }`}
     >
       <div className="space-y-1 z-10">
@@ -61,9 +61,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
       {/* Hover overlay add button effect */}
       {!isOutOfStock && (
-        <div className="absolute inset-0 flex items-center justify-center bg-primary/6 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-          <div className="rounded-full bg-card/95 p-2 shadow-[var(--shadow-soft)] transition-transform duration-200 group-hover:translate-y-0">
-            <Plus className="h-6 w-6 text-primary" />
+        <div className="absolute inset-0 flex items-center justify-center bg-primary/[0.03] opacity-0 transition-opacity duration-[var(--duration-normal)] ease-[var(--ease-out-expo)] group-hover:opacity-100 group-focus-visible:opacity-100">
+          <div className="rounded-full bg-card/95 p-2.5 shadow-[var(--shadow-lift)] transition-transform duration-[var(--duration-smooth)] ease-[var(--ease-out-back)] translate-y-2 group-hover:translate-y-0">
+            <Plus className="h-5 w-5 text-foreground" />
           </div>
         </div>
       )}
@@ -79,7 +79,7 @@ export function ProductCard({ product }: ProductCardProps) {
       
       {/* In cart badge indicator */}
       {inCart > 0 && (
-        <div className="absolute top-2 right-2 z-20 flex h-7 min-w-7 items-center justify-center rounded-full bg-primary px-2 text-[11px] font-bold text-primary-foreground shadow-[var(--shadow-soft)]">
+        <div className="absolute top-2 right-2 z-20 flex h-7 min-w-7 items-center justify-center rounded-full bg-primary px-2 text-[11px] font-bold text-primary-foreground shadow-[var(--shadow-soft)] animate-[fadeInScale_0.2s_var(--ease-out-back)]">
           {inCart}
         </div>
       )}

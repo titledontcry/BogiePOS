@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { Plus, RefreshCw, Tag } from "lucide-react"
+import { IconPlus, IconRefresh, IconTag, IconTagOff } from "@tabler/icons-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -70,45 +70,64 @@ export default function PromotionsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 space-y-6 max-w-5xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border bg-card px-5 py-5 shadow-[var(--shadow-soft)]">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-3 text-balance">
-            <div className="p-2 bg-accent rounded-2xl">
-              <Tag className="h-6 w-6 text-accent-foreground" />
-            </div>
-            จัดการโปรโมชั่น
-          </h1>
-          <p className="text-muted-foreground mt-1 text-pretty">
-            ตั้งค่าส่วนลดสำหรับสินค้าในร้าน ทั้งแบบลดราคาคงที่ ลดเปอร์เซ็นต์ หรือจัดชุดราคาพิเศษ
-          </p>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+      {/* Top Bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 text-primary rounded-xl shrink-0">
+            <IconTag className="h-6 w-6 stroke-[2]" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground">จัดการโปรโมชั่น</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              ตั้งค่าส่วนลดสำหรับสินค้าในร้าน ทั้งแบบลดราคาคงที่ ลดเปอร์เซ็นต์ หรือจัดชุดราคาพิเศษ
+            </p>
+          </div>
         </div>
-        <Button onClick={handleAdd} className="gap-2">
-          <Plus className="h-4 w-4" />
+        <Button onClick={handleAdd} className="gap-2 shrink-0 rounded-xl">
+          <IconPlus className="h-4 w-4 stroke-[2.5]" />
           สร้างโปรโมชั่น
         </Button>
       </div>
 
       {/* Toolbar */}
-      <div className="flex justify-end bg-card p-2 rounded-2xl border shadow-[var(--shadow-soft)]">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={fetchPromotions} 
-          disabled={isLoading}
-          className="text-muted-foreground"
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin text-primary' : ''}`} />
-          รีเฟรชข้อมูล
-        </Button>
-      </div>
+      {promotions.length > 0 && (
+        <div className="flex justify-end bg-card p-2 rounded-2xl border border-border/50 shadow-sm">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={fetchPromotions} 
+            disabled={isLoading}
+            className="text-muted-foreground rounded-xl"
+          >
+            <IconRefresh className={`h-4 w-4 mr-2 stroke-[2] ${isLoading ? 'animate-spin text-primary' : ''}`} />
+            รีเฟรชข้อมูล
+          </Button>
+        </div>
+      )}
 
       {/* Content */}
       {isLoading && promotions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-          <RefreshCw className="h-8 w-8 animate-spin mb-4 text-primary" />
+        <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
+          <IconRefresh className="h-8 w-8 animate-spin mb-4 text-primary/50 stroke-[2]" />
           <p>กำลังโหลดข้อมูลโปรโมชั่น...</p>
+        </div>
+      ) : promotions.length === 0 ? (
+        /* Empty State */
+        <div className="flex flex-col items-center justify-center py-20 px-4 border border-dashed rounded-3xl bg-card/30 text-center space-y-4 max-w-md mx-auto mt-8 shadow-sm">
+          <div className="p-4 bg-muted/40 rounded-full text-muted-foreground">
+            <IconTagOff className="h-10 w-10 text-muted-foreground/60 stroke-[1.5]" />
+          </div>
+          <div className="space-y-1.5">
+            <h3 className="text-lg font-bold text-foreground">ยังไม่มีโปรโมชั่น</h3>
+            <p className="text-sm text-muted-foreground max-w-[280px]">
+              สร้างโปรโมชั่นแรกเพื่อกระตุ้นยอดขายของคุณ เช่น ลดราคาคงที่ ลดเป็นเปอร์เซ็นต์ หรือจัดเซ็ตราคาสุดพิเศษ
+            </p>
+          </div>
+          <Button onClick={handleAdd} className="gap-2 rounded-xl mt-2">
+            <IconPlus className="h-4 w-4 stroke-[2.5]" />
+            สร้างโปรโมชั่นแรก
+          </Button>
         </div>
       ) : (
         <PromotionTable 
@@ -133,3 +152,4 @@ export default function PromotionsPage() {
     </div>
   )
 }
+
