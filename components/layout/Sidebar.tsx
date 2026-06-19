@@ -9,8 +9,11 @@ import {
   IconTag,
   IconHistory,
   IconLayoutDashboard,
+  IconSettings,
+  IconPower,
 } from '@tabler/icons-react';
 import { cn } from '@/lib/utils';
+import { useAuthStore } from '@/store/authStore';
 
 const navItems = [
   { href: '/pos', label: 'ขายสินค้า', icon: IconShoppingCart },
@@ -22,33 +25,24 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { logout } = useAuthStore();
 
   return (
-    <aside className="hidden lg:flex lg:flex-col w-[200px] h-full shrink-0 z-40 bg-card border-r border-border/40">
-      <div className="flex flex-col flex-grow overflow-y-auto">
-        {/* Logo */}
-        <div className="flex items-center gap-2.5 h-16 px-4 border-b border-border/40 shrink-0">
-          <div className="h-8 w-8 rounded-xl overflow-hidden border border-border/50 shadow-sm shrink-0">
-            <Image
-              src="/logo.jpg"
-              alt="BogiePOS Logo"
-              width={32}
-              height={32}
-              className="h-full w-full object-cover"
-            />
-          </div>
-          <div>
-            <h1 className="text-sm font-extrabold text-foreground leading-tight tracking-tight">
-              BogiePOS
-            </h1>
-            <p className="text-[10px] text-muted-foreground font-medium">
-              ร้านพรีม
-            </p>
-          </div>
+    <aside className="hidden lg:flex lg:flex-col w-[72px] h-full shrink-0 z-40 bg-card border-r border-border/40">
+      <div className="flex flex-col items-center h-full flex-grow py-4 overflow-y-auto min-h-0">
+        {/* Logo (Centered, no text) */}
+        <div className="flex items-center justify-center h-12 w-12 rounded-xl overflow-hidden border border-border/50 shadow-sm shrink-0 mb-6 bg-white">
+          <Image
+            src="/logo.jpg"
+            alt="BogiePOS Logo"
+            width={48}
+            height={48}
+            className="h-full w-full object-cover"
+          />
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-1">
+        {/* Navigation - Icon only with custom tooltips */}
+        <nav className="flex-1 flex flex-col items-center gap-3 w-full px-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -56,32 +50,48 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200 group',
+                  'h-12 w-12 flex items-center justify-center rounded-xl transition-all duration-200 active:scale-95 group relative',
                   isActive
-                    ? 'bg-secondary/70 text-foreground font-semibold shadow-sm'
-                    : 'text-muted-foreground font-medium hover:text-foreground hover:bg-accent/50',
+                    ? 'bg-[#1D1D1F] text-white shadow-md'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/60',
                 )}
               >
                 <item.icon
-                  stroke={isActive ? 2.5 : 1.75}
-                  className={cn(
-                    'h-[18px] w-[18px] shrink-0 transition-colors',
-                    isActive
-                      ? 'text-foreground'
-                      : 'text-muted-foreground group-hover:text-foreground',
-                  )}
+                  stroke={isActive ? 2.25 : 1.75}
+                  className="h-5 w-5 shrink-0"
                 />
-                {item.label}
+                
+                {/* Custom tooltip helper (on hover) */}
+                <span className="absolute left-16 opacity-0 translate-x-1 transition-all duration-200 rounded bg-neutral-900 p-2 text-xs text-white group-hover:opacity-100 group-hover:translate-x-0 z-50 whitespace-nowrap shadow-md pointer-events-none font-medium">
+                  {item.label}
+                </span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 mt-auto shrink-0">
-          <div className="rounded-2xl bg-secondary/80 px-3 py-2 text-[10px] font-medium text-muted-foreground text-center border border-border/40">
-            BogiePOS v1.0 by Title.
-          </div>
+        {/* Bottom Actions (Settings & Logout) */}
+        <div className="flex flex-col items-center gap-3 mt-auto shrink-0 w-full px-2 pt-4 border-t border-border/30">
+          {/* Settings button */}
+          <button
+            className="h-12 w-12 flex items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-200 active:scale-95 cursor-pointer group relative"
+          >
+            <IconSettings stroke={1.75} className="h-5 w-5" />
+            <span className="absolute left-16 opacity-0 translate-x-1 transition-all duration-200 rounded bg-neutral-900 p-2 text-xs text-white group-hover:opacity-100 group-hover:translate-x-0 z-50 whitespace-nowrap shadow-md pointer-events-none font-medium">
+              ตั้งค่า
+            </span>
+          </button>
+
+          {/* Logout button */}
+          <button
+            onClick={() => logout()}
+            className="h-12 w-12 flex items-center justify-center rounded-xl text-[#FF3B30] bg-[#FF3B30]/10 hover:bg-[#FF3B30]/15 transition-all duration-200 active:scale-95 cursor-pointer group relative"
+          >
+            <IconPower stroke={2} className="h-5 w-5" />
+            <span className="absolute left-16 opacity-0 translate-x-1 transition-all duration-200 rounded bg-neutral-900 p-2 text-xs text-white group-hover:opacity-100 group-hover:translate-x-0 z-50 whitespace-nowrap shadow-md pointer-events-none font-medium">
+              ออกจากระบบ
+            </span>
+          </button>
         </div>
       </div>
     </aside>

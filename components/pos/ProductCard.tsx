@@ -51,7 +51,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <p className="text-xs text-muted-foreground">{product.category}</p>
       </div>
 
-      <div className="mt-4 flex items-end justify-between z-10">
+      <div className="mt-4 flex items-center justify-between w-full z-10">
         <div className="font-extrabold text-primary">
           {formatCurrency(product.price)}
         </div>

@@ -72,7 +72,7 @@ export default function PromotionsPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full">
       {/* Top Bar */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-3">

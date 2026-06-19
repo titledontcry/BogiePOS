@@ -55,7 +55,7 @@ export default function DashboardPage() {
   }, [fetchDashboard])
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 rounded-3xl border bg-card px-5 py-5 shadow-[var(--shadow-soft)]">
         <div>
